@@ -131,22 +131,26 @@ after(async () => {
   if (dataDirectory) await rm(dataDirectory, { recursive: true, force: true });
 });
 
-test("admin route, access controls, shared knowledge, PDF ingestion, and learner answers", async (t) => {
+test("admin route, guided menu, navigation, safety, and persistent settings", async (t) => {
   await t.test("serves the public site and restricted admin API safely", async () => {
-    const [home, adminPage, config, protectedDocuments, serverSource, logo] = await Promise.all([
+    const [home, adminPage, config, protectedDocuments, protectedMenu, serverSource, logo] = await Promise.all([
       fetch(`${baseUrl}/`),
       fetch(`${baseUrl}/admin`),
       fetch(`${baseUrl}/api/config`),
       fetch(`${baseUrl}/api/admin/documents`),
+      fetch(`${baseUrl}/api/admin/menu`),
       fetch(`${baseUrl}/server.mjs`),
       fetch(`${baseUrl}/akgec-skills-logo.png`),
     ]);
     assert.equal(home.status, 200);
     assert.match(await home.text(), /AKGEC SkillMate/);
     assert.equal(adminPage.status, 200);
-    assert.match(await adminPage.text(), /Admin passphrase/);
-    assert.equal((await config.json()).brandName, "AKGEC SkillMate");
+    assert.match(await adminPage.text(), /Guided menu/);
+    const publicConfig = await config.json();
+    assert.equal(publicConfig.brandName, "AKGEC SkillMate");
+    assert.equal(publicConfig.menu.nodes.find((node) => node.id === "home").options.length, 7);
     assert.equal(protectedDocuments.status, 401);
+    assert.equal(protectedMenu.status, 401);
     assert.equal(serverSource.status, 404);
     assert.equal(logo.status, 200);
     assert.equal(logo.headers.get("content-type"), "image/png");
@@ -154,34 +158,26 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
   });
 
-  await t.test("answers greetings and Foundation questions before uploads", async () => {
+  await t.test("starts a seven-option guided menu for any greeting or message", async () => {
     const faqData = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8")).faqs;
     assert.equal(faqData.filter((entry) => entry.id.startsWith("faq-")).length, 105);
     assert.equal(faqData.filter((entry) => entry.id.startsWith("chat-")).length, 15);
 
-    const greeting = await (await api("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ question: "hi" }),
-    })).json();
-    assert.equal(greeting.text, "Hi! Welcome to AKGEC Skills Foundation. What can I help you with today?");
-    assert.equal(greeting.learningMode, "conversation");
-    assert.equal(greeting.feedbackId, "");
-
-    const training = await (await api("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ question: "What training programs does AKGEC Skills Foundation offer?" }),
-    })).json();
-    assert.match(training.text, /Industrial Robotics/i);
-    assert.doesNotMatch(training.text, /akgecskills\.in|source/i);
-
-    const contact = await (await api("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ question: "What is the contact email for AKGEC Skills?" }),
-    })).json();
-    assert.match(contact.text, /skills@akgec\.ac\.in/);
+    for (const question of ["hi", "What is the fee?", "tell me anything"]) {
+      const response = await api("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ question }),
+      });
+      const answer = await response.json();
+      assert.equal(response.status, 200);
+      assert.equal(answer.learningMode, "guided-menu");
+      assert.equal(answer.menu.nodeId, "home");
+      assert.equal(answer.menu.options.length, 7);
+      assert.match(answer.text, /Welcome to AKGEC Skills Foundation/i);
+    }
   });
 
-  await t.test("loads the categorized, deduplicated FAQ chunk corpus", async () => {
+  await t.test("keeps the legacy FAQ corpus separate from guided menu responses", async () => {
     const corpus = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8"));
     const { faqs, categories } = corpus;
     assert.equal(corpus.schemaVersion, 2);
@@ -216,97 +212,51 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal(corpus.faqs.find((entry) => entry.id === "faq-036").reviewRequired, true);
   });
 
-  await t.test("retrieves FAQ answers through question keyword matching", async () => {
-    const join = await (await api("/api/chat", {
+  await t.test("navigates programs, details, registration, back, home, and exit", async () => {
+    const list = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "I want to join a robotics course." }),
+      body: JSON.stringify({ question: "2", nodeId: "home", trail: ["home"] }),
     })).json();
-    assert.match(join.text, /qualification/i);
-    assert.match(join.text, /course/i);
-    assert.equal(join.learningMode, "keyword-faq");
+    assert.equal(list.menu.nodeId, "training-programs");
+    assert.equal(list.menu.options.length, 7);
+    assert.match(list.text, /Choose a centre or training area/i);
 
-    const fee = await (await api("/api/chat", {
+    const details = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "How much does a robotics course cost?" }),
+      body: JSON.stringify({
+        question: "1",
+        nodeId: list.menu.nodeId,
+        trail: list.menu.trail,
+        optionId: "kuka",
+      }),
     })).json();
-    assert.match(fee.text, /Fees depend on the course/i);
-    assert.match(fee.text, /latest amount/i);
-    assert.equal(fee.learningMode, "keyword-faq");
+    assert.equal(details.menu.nodeId, "program-kuka");
+    assert.match(details.text, /hands-on training with industrial robot applications/i);
+    assert.equal(details.menu.registrationUrl, "https://test-beryl-three-39.vercel.app/");
 
-    const job = await (await api("/api/chat", {
+    const back = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "Do you promise students a job after training?" }),
+      body: JSON.stringify({
+        question: "Back",
+        nodeId: details.menu.nodeId,
+        trail: details.menu.trail,
+        action: "back",
+      }),
     })).json();
-    assert.match(job.text, /A job isn't guaranteed/i);
-    assert.equal(job.learningMode, "keyword-faq");
+    assert.equal(back.menu.nodeId, "training-programs");
 
-    const incubation = await (await api("/api/chat", {
+    const home = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "What is the incubation centre email?" }),
+      body: JSON.stringify({ question: "Main menu", nodeId: back.menu.nodeId, action: "home" }),
     })).json();
-    assert.match(incubation.text, /incubation\.asf@akgec\.ac\.in/);
+    assert.equal(home.menu.nodeId, "home");
 
-    const addressVariant = await (await api("/api/chat", {
+    const exit = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "What is the address of AKGEC Skills Foundation?" }),
+      body: JSON.stringify({ question: "Exit", nodeId: home.menu.nodeId, action: "exit" }),
     })).json();
-    assert.match(addressVariant.text, /Delhi-Hapur Bypass Road/i);
-    assert.equal(addressVariant.learningMode, "keyword-faq");
-
-    const unrelated = await (await api("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ question: "Can you tell me today's weather forecast?" }),
-    })).json();
-    assert.match(unrelated.text, /AKGEC Skills Foundation enquiries/i);
-    assert.notEqual(unrelated.learningMode, "keyword-faq");
-  });
-
-  await t.test("answers common questions in a natural, helpful tone", async () => {
-    const cases = [
-      {
-        question: "What is AKGEC Skills Foundation?",
-        expected: /skill-development initiative/i,
-      },
-      {
-        question: "Can you tell me where AKGEC Skills Foundation is located?",
-        expected: /You'll find AKGEC Skills Foundation/i,
-      },
-      {
-        question: "What courses does AKGEC Skills Foundation offer?",
-        expected: /The Foundation lists training in/i,
-      },
-      {
-        question: "How do I register for a course?",
-        expected: /contact the Foundation's training team/i,
-      },
-      {
-        question: "How much does a course cost?",
-        expected: /I don't have a confirmed current fee list/i,
-      },
-      {
-        question: "Does the Foundation guarantee me a job?",
-        expected: /A job isn't guaranteed/i,
-      },
-      {
-        question: "What is the phone number for AKGEC Skills Foundation?",
-        expected: /You can contact us at/i,
-      },
-      {
-        question: "I want to join",
-        expected: /what course are you interested in/i,
-      },
-    ];
-
-    for (const { question, expected } of cases) {
-      const response = await api("/api/chat", {
-        method: "POST",
-        body: JSON.stringify({ question }),
-      });
-      const answer = await response.json();
-      assert.equal(response.status, 200, question);
-      assert.match(answer.text, expected, question);
-      assert.doesNotMatch(answer.text, /source:|akgecskills\.in/i, question);
-    }
+    assert.equal(exit.menu.closed, true);
+    assert.match(exit.text, /Thanks for visiting/i);
   });
 
   await t.test("rejects cross-origin and incorrect admin sign-in", async () => {
@@ -339,7 +289,37 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal((await (await api("/api/admin/session", { headers: { Cookie: adminCookie } })).json()).authenticated, true);
   });
 
-  await t.test("retrieves relevant approved text without exposing document sources", async () => {
+  await t.test("lets admins edit menu copy and safely validates all menu links", async () => {
+    const config = await (await api("/api/config")).json();
+    const originalMenu = config.menu;
+    const changedMenu = structuredClone(originalMenu);
+    changedMenu.nodes.find((node) => node.id === "home").message = "Choose one of these seven topics.";
+    const saved = await api("/api/admin/menu", {
+      method: "PUT",
+      headers: { Cookie: adminCookie, Origin: baseUrl },
+      body: JSON.stringify({ menu: changedMenu }),
+    });
+    assert.equal(saved.status, 200);
+    assert.equal((await (await api("/api/config")).json()).menu.nodes.find((node) => node.id === "home").message, "Choose one of these seven topics.");
+
+    const invalidMenu = structuredClone(changedMenu);
+    invalidMenu.nodes.find((node) => node.id === "home").options[0].target = "missing-node";
+    const rejected = await api("/api/admin/menu", {
+      method: "PUT",
+      headers: { Cookie: adminCookie, Origin: baseUrl },
+      body: JSON.stringify({ menu: invalidMenu }),
+    });
+    assert.equal(rejected.status, 400);
+
+    const crossOrigin = await api("/api/admin/menu", {
+      method: "PUT",
+      headers: { Cookie: adminCookie, Origin: "http://attacker.example" },
+      body: JSON.stringify({ menu: originalMenu }),
+    });
+    assert.equal(crossOrigin.status, 403);
+  });
+
+  await t.test("keeps uploaded reference documents out of public menu replies", async () => {
     const upload = await addText(
       "approved-programs.txt",
       "The robotics workshop meets every Saturday at 10 AM for hands-on student learning. Students can also join the weekly design challenge.",
@@ -351,15 +331,9 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     });
     const answer = await answerResponse.json();
     assert.equal(answerResponse.status, 200);
-    assert.match(answer.text, /every Saturday at 10 AM/);
-    assert.equal(Object.hasOwn(answer, "source"), false);
-    assert.equal(answer.text.includes("approved-programs.txt"), false);
-
-    const unrelated = await (await api("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ question: "Tell me about available scholarships" }),
-    })).json();
-    assert.match(unrelated.text, /couldn’t find confirmed information/i);
+    assert.equal(answer.learningMode, "guided-menu");
+    assert.equal(answer.menu.nodeId, "home");
+    assert.doesNotMatch(answer.text, /Saturday|approved-programs\.txt/);
   });
 
   await t.test("blocks secret and adult-content requests without echoing them", async () => {
@@ -371,57 +345,24 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       const answer = await response.json();
       assert.equal(answer.blocked, true);
       assert.doesNotMatch(answer.text, /password|sexual/i);
+      assert.equal(answer.menu.options.length, 7);
     }
   });
 
-  await t.test("updates passage ranking from one-time feedback without retaining learner text", async () => {
+  await t.test("menu responses do not use uploaded material or passage-learning feedback", async () => {
     const answerResponse = await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "When is the robotics workshop?" }),
+      body: JSON.stringify({ question: "When is the robotics workshop?", nodeId: "home", trail: ["home"] }),
     });
     const answer = await answerResponse.json();
-    assert.ok(answer.feedbackId);
-    assert.equal(answer.learningMode, "contextual-bandit");
-
-    const wrongOrigin = await api("/api/feedback", {
-      method: "POST",
-      headers: { Origin: "http://attacker.example" },
-      body: JSON.stringify({ feedbackId: answer.feedbackId, rating: "up" }),
-    });
-    assert.equal(wrongOrigin.status, 403);
-
-    const invalidRating = await api("/api/feedback", {
-      method: "POST",
-      headers: { Origin: baseUrl },
-      body: JSON.stringify({ feedbackId: answer.feedbackId, rating: "great" }),
-    });
-    assert.equal(invalidRating.status, 400);
-
-    const accepted = await api("/api/feedback", {
-      method: "POST",
-      headers: { Origin: baseUrl },
-      body: JSON.stringify({ feedbackId: answer.feedbackId, rating: "up" }),
-    });
-    assert.equal(accepted.status, 200);
-    const status = await accepted.json();
-    assert.equal(status.feedbackCount, 1);
-    assert.equal(status.helpfulCount, 1);
-    assert.equal(status.notHelpfulCount, 0);
-
-    const replay = await api("/api/feedback", {
-      method: "POST",
-      headers: { Origin: baseUrl },
-      body: JSON.stringify({ feedbackId: answer.feedbackId, rating: "down" }),
-    });
-    assert.equal(replay.status, 410);
-
-    const saved = JSON.parse(await readFile(path.join(dataDirectory, "knowledge.json"), "utf8"));
-    assert.deepEqual(Object.keys(saved.ranker).sort(), ["bias", "feedbackCount", "helpfulCount", "notHelpfulCount", "weights"]);
-    assert.equal(saved.ranker.feedbackCount, 1);
-    assert.equal(JSON.stringify(saved.ranker).includes("When is the robotics workshop?"), false);
+    assert.equal(answer.learningMode, "guided-menu");
+    assert.equal(answer.feedbackId, "");
+    assert.equal(answer.menu.nodeId, "home");
+    assert.match(answer.text, /Please choose a menu number/i);
+    assert.doesNotMatch(answer.text, /Saturday at 10 AM/i);
   });
 
-  await t.test("extracts a text-based PDF and retrieves its content", async () => {
+  await t.test("extracts a text-based PDF without using it in menu replies", async () => {
     const pdfBytes = makePdf("The robotics lab opens on Friday at nine AM.");
     const upload = await api("/api/admin/documents", {
       method: "POST",
@@ -433,8 +374,9 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       method: "POST",
       body: JSON.stringify({ question: "When does the robotics lab open?" }),
     })).json();
-    assert.match(answer.text, /Friday at nine AM/);
-    assert.equal(Object.hasOwn(answer, "source"), false);
+    assert.equal(answer.learningMode, "guided-menu");
+    assert.equal(answer.menu.nodeId, "home");
+    assert.doesNotMatch(answer.text, /Friday at nine AM/);
   });
 
   await t.test("saves appearance and rejects cross-origin admin changes", async () => {
@@ -485,7 +427,7 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal(documents.documents.length, 2);
 
     const learning = await api("/api/admin/learning", { headers: { Cookie: adminCookie } });
-    assert.equal((await learning.json()).feedbackCount, 1);
+    assert.equal((await learning.json()).feedbackCount, 0);
     const reset = await api("/api/admin/learning/reset", {
       method: "POST",
       headers: { Cookie: adminCookie, Origin: baseUrl },

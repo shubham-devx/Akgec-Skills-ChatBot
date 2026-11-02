@@ -53,7 +53,7 @@
           </span>
           <div>
             <strong>Your space, your data</strong>
-            <p>Your chat history stays here. Questions search approved Foundation materials.</p>
+            <p>Your chat history stays here. Pick a menu option to explore Foundation information.</p>
           </div>
         </div>
         <div class="sidebar-footer">
@@ -90,53 +90,21 @@
                 <div class="hero-trust"><span class="hero-trust-icon">✳</span><span>Made for learners, by AKGEC Skills Foundation</span></div>
               </div>
             </div>
-            <div class="suggestion-heading"><span>START WITH A QUESTION</span><span>Choose a path to explore</span></div>
-            <div class="prompt-grid" aria-label="Suggested questions">
-              <button class="prompt-card" data-prompt="What skills should I learn to get started in tech?">
-                <span class="prompt-icon lavender">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1" /><circle cx="12" cy="12" r="4" /></svg>
-                </span>
-                <span><strong>Find your direction</strong><small>What skills should I learn to get started in tech?</small></span>
-                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
-              </button>
-              <button class="prompt-card" data-prompt="How can I build a portfolio with my projects?">
-                <span class="prompt-icon mint">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 9h8M8 13h5" /><path d="m15 17 2 2 4-4" /></svg>
-                </span>
-                <span><strong>Build your portfolio</strong><small>How can I build a portfolio with my projects?</small></span>
-                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
-              </button>
-              <button class="prompt-card" data-prompt="How do I prepare for my first interview?">
-                <span class="prompt-icon peach">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M8 6V4h8v2M8 11h8m-8 4h5" /></svg>
-                </span>
-                <span><strong>Get interview-ready</strong><small>How do I prepare for my first interview?</small></span>
-                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
-              </button>
-              <button class="prompt-card" data-prompt="What learning resources are available at AKGEC Skills Foundation?">
-                <span class="prompt-icon blue">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12Z" /><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20M8 7h7m-7 4h7" /></svg>
-                </span>
-                <span><strong>Explore learning</strong><small>What learning resources are available at AKGEC Skills Foundation?</small></span>
-                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
-              </button>
-            </div>
-            <div class="welcome-note"><span class="note-check">✓</span> One useful answer is a great place to start.</div>
+            <div class="suggestion-heading"><span>CHOOSE A TOPIC</span><span>Or say hi to see these options in chat</span></div>
+            <div class="prompt-grid menu-start-grid" id="startMenu" aria-label="AKGEC Skills Foundation menu" aria-live="polite"></div>
+            <div class="welcome-note"><span class="note-check">✓</span> Select an option, then choose a number or tap a button to continue.</div>
           </div>
           <div class="messages" id="messages"></div>
         </section>
 
         <footer class="composer-area">
           <form class="composer" id="composer">
-            <textarea id="messageInput" rows="1" placeholder="Ask SkillMate anything..." aria-label="Your message"></textarea>
+            <textarea id="messageInput" rows="1" placeholder="Say hi or type a menu number..." aria-label="Say hi or enter a menu number"></textarea>
             <button class="send-button" id="sendButton" type="submit" aria-label="Send message" disabled>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4.8 14-2.3-5-6.9-2Z" /><path d="m11.9 14 3.2-3.2" /></svg>
             </button>
           </form>
-          <div class="learning-consent">
-            <label><input id="learningConsent" type="checkbox" /><span class="consent-box"></span><span><strong>Help improve SkillMate</strong><small>Share anonymous thumbs-up/down ratings. Your question and answer are never sent with feedback.</small></span></label>
-            <span class="consent-lock" title="Optional; off by default">PRIVATE BY DEFAULT</span>
-          </div>
+          <div class="menu-hint">Menu-based replies · Use <strong>Back</strong>, <strong>Main menu</strong>, or <strong>Exit</strong> at any time.</div>
           <div class="composer-meta">
             <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg> History saved in this browser</span>
             <span>Check important information with the Foundation team.</span>
@@ -152,11 +120,10 @@
       </button>
       <span class="dialog-mark">✳</span>
       <h2>Your AKGEC learning companion.</h2>
-      <p>SkillMate answers from information approved and added by the AKGEC Skills Foundation team.</p>
+      <p>SkillMate guides you through a numbered menu of AKGEC Skills Foundation information.</p>
       <div class="dialog-facts">
         <div><strong>Private chat history</strong><span>Your conversation history stays in this browser.</span></div>
-        <div><strong>Knowledge-based answers</strong><span>Answers use relevant passages from approved Foundation materials.</span></div>
-        <div><strong>Optional learning feedback</strong><span>Ratings improve passage ranking only when you opt in; your question and answer are never attached to a rating.</span></div>
+        <div><strong>Guided menu</strong><span>Choose a numbered topic, browse program details, and follow registration links.</span></div>
         <div><strong>Need more help?</strong><span>Contact the AKGEC Skills Foundation team to verify important or time-sensitive information.</span></div>
       </div>
       <button class="dialog-done" id="aboutDone">Got it</button>

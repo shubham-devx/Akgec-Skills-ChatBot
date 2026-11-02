@@ -58,54 +58,124 @@ const keywordAliases = new Map([
   ["enrol", "registration"], ["enroll", "registration"], ["apply", "registration"],
   ["availability", "available"],
 ]);
-const foundationFaqCorpus = JSON.parse(await readFile(path.join(root, "foundation-faqs.json"), "utf8"));
-const foundationFaqs = foundationFaqCorpus?.faqs;
-if (
-  foundationFaqCorpus?.schemaVersion !== 2 ||
-  !Array.isArray(foundationFaqCorpus.categories) ||
-  !Array.isArray(foundationFaqs) ||
-  foundationFaqs.some((entry) =>
-    !entry ||
-    typeof entry.id !== "string" ||
-    typeof entry.category !== "string" ||
-    !foundationFaqCorpus.categories.includes(entry.category) ||
-    typeof entry.question !== "string" ||
-    !Array.isArray(entry.questionVariants) ||
-    entry.questionVariants.some((variant) => typeof variant !== "string") ||
-    !Array.isArray(entry.keywords) ||
-    typeof entry.answer !== "string" ||
-    !entry.answer.trim() ||
-    typeof entry.reviewRequired !== "boolean" ||
-    !entry.chunk ||
-    typeof entry.chunk.id !== "string" ||
-    typeof entry.chunk.text !== "string" ||
-    entry.chunk.metadata?.faqId !== entry.id ||
-    entry.chunk.metadata?.category !== entry.category
-  )
-) {
-  throw new Error("foundation-faqs.json must contain valid categorized FAQ chunks.");
-}
-const foundationKnowledge = {
-  text: [
-    "AKGEC Skills Foundation (ASF) is an ISO 9001:2015 certified and NABL accredited facility, and a joint initiative of Ajay Kumar Garg Engineering College (AKGEC) and the National Skill Development Corporation (NSDC), Ministry of Skill Development and Entrepreneurship, Government of India.",
-    "AKGEC Skills Foundation offers technical and vocational training programs for engineering, diploma, ITI, Class 12, and Class 10 students to help them become industry ready and globally employable.",
-    "The AKGEC Skills website lists training areas including robotics, automation, manufacturing, and welding.",
-    "Its Centres of Excellence include the Industrial Pneumatics Knowledge Center, Industrial Robotics Training Center, and AKGEC Drone Academy.",
-    "AKGEC Skills Foundation training programs include Industrial Robot Programming, Robot Cell Designer, Robot Programming Basics, Advanced Robotics, Robotics Workshop, Industrial Robotics internship, and Robotic Process Automation.",
-    "The Foundation's mission includes research in automation, robotics, and advanced manufacturing, engineering education, and collaboration with industry and government research agencies.",
-    "The Foundation's vision is to train young professionals and support industry through training, research, and product development in automation, robotics, and advanced manufacturing.",
-    "Listed industrial services include 3D modelling, structural analysis and optimization, CNC machining, calibration, non-destructive testing, 3D printing, laser cutting and engraving, PCB manufacturing, factory automation, hydraulic and pneumatic systems, and industrial IoT.",
-    "AKGEC Skills Foundation is located at 27th Km Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad - 201015.",
-    "AKGEC Skills Foundation's contact email is skills@akgec.ac.in and its phone number is +91 9910249199.",
-  ].join("\n"),
+const defaultGuidedMenu = {
+  welcomeText: "Hi! Welcome to AKGEC Skills Foundation. Choose a topic below, or type a number to explore.",
+  entryNodeId: "home",
+  registrationUrl: "https://test-beryl-three-39.vercel.app/",
+  nodes: [
+    {
+      id: "home",
+      message: "What would you like to explore?",
+      options: [
+        { id: "about", label: "About the Foundation", target: "about" },
+        { id: "training-programs", label: "Training programs", target: "training-programs" },
+        { id: "fees", label: "Fees and duration", target: "fees" },
+        { id: "admissions", label: "Admissions and registration", target: "admissions" },
+        { id: "internships", label: "Internships and placements", target: "internships" },
+        { id: "centres", label: "Centres and industry services", target: "centres" },
+        { id: "contact", label: "Contact and support", target: "contact" },
+      ],
+    },
+    {
+      id: "about",
+      message: "AKGEC Skills Foundation (ASF) is an initiative of Ajay Kumar Garg Engineering College, supported by the National Skill Development Corporation (NSDC). It promotes practical, industry-oriented skills and collaboration between education and industry.",
+      options: [],
+    },
+    {
+      id: "training-programs",
+      message: "Choose a centre or training area to learn more. Course availability and schedules can change, so please confirm current details with the Foundation.",
+      options: [
+        { id: "kuka", label: "AKGEC-KUKA Centre", target: "program-kuka" },
+        { id: "labview", label: "AKGEC-NI LabVIEW Academy", target: "program-labview" },
+        { id: "bosch", label: "AKGEC-BOSCH CEAT", target: "program-bosch" },
+        { id: "aia", label: "AIA-CIA", target: "program-aia" },
+        { id: "automation", label: "Industrial automation", target: "program-automation" },
+        { id: "drone", label: "Drone training", target: "program-drone" },
+        { id: "manufacturing", label: "Advanced manufacturing", target: "program-manufacturing" },
+      ],
+    },
+    {
+      id: "program-kuka",
+      message: "Build practical robotics skills through programming and hands-on training with industrial robot applications at the AKGEC-KUKA Centre.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-labview",
+      message: "The AKGEC-NI LabVIEW Academy covers LabVIEW, test and measurement, machine vision, control systems and industrial IoT.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-bosch",
+      message: "The AKGEC-BOSCH CEAT offers applied technical training. Contact the Foundation to confirm current courses and schedules.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-aia",
+      message: "AIA-CIA introduces integrated automation concepts and practical, industry-oriented engineering skills.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-automation",
+      message: "Automation training areas include PLC, HMI and SCADA systems, industrial robotics, drives, hydraulics, pneumatics and mechatronics.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-drone",
+      message: "The Foundation website describes DGCA-certified drone training. Please contact the team to confirm current availability, eligibility and schedule.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "program-manufacturing",
+      message: "The Foundation supports practical work in advanced manufacturing, prototyping, testing and measurement. Ask the team which current programs match your interests.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "fees",
+      message: "Fees and course duration depend on the selected program and current schedule. I don’t have a confirmed fee list. Contact the Foundation for current details before registering.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "admissions",
+      message: "Ready to explore registration? Open the Foundation portal below. Please confirm course availability and eligibility with the Foundation.",
+      options: [],
+      showRegistration: true,
+    },
+    {
+      id: "internships",
+      message: "Internship and placement opportunities depend on current programs and employer requirements. Contact the Foundation to ask about openings, eligibility and any placement support for a specific course.",
+      options: [],
+      links: [{ label: "Contact the Foundation on WhatsApp", url: "https://wa.me/917518681245?text=Hello%20AKGEC%20Skills%20Foundation%2C%20I%20would%20like%20to%20ask%20about%20internships." }],
+    },
+    {
+      id: "centres",
+      message: "The Foundation website lists specialist facilities including the AKGEC-KUKA Centre, AKGEC-NI LabVIEW Academy, AKGEC-BOSCH CEAT and AIA-CIA. Its industry engagement includes automation, prototyping, testing and measurement.",
+      options: [],
+    },
+    {
+      id: "contact",
+      message: "For course enquiries, contact the Foundation at skills@akgec.ac.in or call +91 9910249199.",
+      options: [],
+      links: [{ label: "Contact the Foundation on WhatsApp", url: "https://wa.me/917518681245?text=Hello%20AKGEC%20Skills%20Foundation%2C%20I%20have%20a%20question." }],
+    },
+  ],
 };
 const defaultSettings = {
   brandName: "AKGEC SkillMate",
   headline: "Big goals start with one question.",
-  description: "Explore skills, find your next step, and make the most of your learning journey at AKGEC.",
+  description: "Choose a topic to explore AKGEC Skills Foundation courses, programs, fees and registration.",
   theme: "violet",
+  menu: defaultGuidedMenu,
 };
 const themes = new Set(["violet", "blue", "teal", "amber"]);
+const menuIdPattern = /^[a-z0-9][a-z0-9-]{0,59}$/;
 const sessions = new Map();
 const loginAttempts = new Map();
 const publicRequests = new Map();
@@ -148,7 +218,11 @@ const saved = await loadData();
 if (saved) {
   data = {
     documents: Array.isArray(saved.documents) ? saved.documents : [],
-    settings: { ...defaultSettings, ...(saved.settings || {}) },
+    settings: {
+      ...defaultSettings,
+      ...(saved.settings || {}),
+      menu: normalizeGuidedMenu(saved.settings?.menu || defaultGuidedMenu),
+    },
     ranker: {
       ...initialRanker,
       ...(saved.ranker || {}),
@@ -172,6 +246,92 @@ function safeSettings(settings) {
     headline: settings.headline,
     description: settings.description,
     theme: settings.theme,
+    menu: settings.menu,
+  };
+}
+
+function normalizeGuidedMenu(value) {
+  const invalid = () => {
+    throw new Error("The guided menu configuration is invalid. Check its nodes, options, links, and HTTPS URLs.");
+  };
+  if (
+    !value ||
+    typeof value !== "object" ||
+    typeof value.welcomeText !== "string" ||
+    !value.welcomeText.trim() ||
+    value.welcomeText.length > 300 ||
+    typeof value.entryNodeId !== "string" ||
+    !menuIdPattern.test(value.entryNodeId) ||
+    !Array.isArray(value.nodes) ||
+    value.nodes.length < 1 ||
+    value.nodes.length > 100
+  ) invalid();
+
+  const validateUrl = (value) => {
+    if (typeof value !== "string" || value.length > 500) invalid();
+    let url;
+    try {
+      url = new URL(value);
+    } catch {
+      invalid();
+    }
+    if (url.protocol !== "https:" || !url.hostname || url.username || url.password) invalid();
+    return url.href;
+  };
+  const registrationUrl = validateUrl(value.registrationUrl);
+  const ids = new Set();
+  const nodes = value.nodes.map((node) => {
+    if (
+      !node ||
+      typeof node.id !== "string" ||
+      !menuIdPattern.test(node.id) ||
+      ids.has(node.id) ||
+      typeof node.message !== "string" ||
+      !node.message.trim() ||
+      node.message.length > 2000 ||
+      !Array.isArray(node.options) ||
+      node.options.length > 12 ||
+      (node.showRegistration !== undefined && typeof node.showRegistration !== "boolean")
+    ) invalid();
+    ids.add(node.id);
+    const optionIds = new Set();
+    const options = node.options.map((option) => {
+      if (
+        !option ||
+        typeof option.id !== "string" ||
+        !menuIdPattern.test(option.id) ||
+        optionIds.has(option.id) ||
+        typeof option.label !== "string" ||
+        !option.label.trim() ||
+        option.label.length > 100 ||
+        typeof option.target !== "string" ||
+        !menuIdPattern.test(option.target)
+      ) invalid();
+      optionIds.add(option.id);
+      return { id: option.id, label: option.label.trim(), target: option.target };
+    });
+    const links = node.links === undefined ? [] : node.links;
+    if (!Array.isArray(links) || links.length > 5) invalid();
+    const normalizedLinks = links.map((link) => {
+      if (!link || typeof link.label !== "string" || !link.label.trim() || link.label.length > 100) invalid();
+      return { label: link.label.trim(), url: validateUrl(link.url) };
+    });
+    return {
+      id: node.id,
+      message: node.message.trim(),
+      options,
+      ...(node.showRegistration === true ? { showRegistration: true } : {}),
+      ...(node.registrationUrl ? { registrationUrl: validateUrl(node.registrationUrl) } : {}),
+      ...(normalizedLinks.length ? { links: normalizedLinks } : {}),
+    };
+  });
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  if (!nodeIds.has(value.entryNodeId) || nodes.some((node) => node.options.some((option) => !nodeIds.has(option.target)))) invalid();
+  return {
+    welcomeText: value.welcomeText.trim(),
+    entryNodeId: value.entryNodeId,
+    registrationUrl,
+    nodes,
   };
 }
 
@@ -391,15 +551,7 @@ function keywordTokens(text) {
     .filter((word) => !retrievalStopWords.has(word) && !faqStopWords.has(word)))];
 }
 
-const indexedFaqs = foundationFaqs.map((entry) => ({
-  ...entry,
-  normalizedQuestion: entry.question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(),
-  questionTerms: new Set(keywordTokens([
-    entry.question,
-    ...entry.questionVariants,
-  ].join(" "))),
-  answerTerms: new Set(keywordTokens(entry.answer)),
-}));
+const indexedFaqs = [];
 const faqDocumentFrequency = new Map();
 for (const entry of indexedFaqs) {
   for (const term of new Set([...entry.questionTerms, ...entry.answerTerms])) {
@@ -523,6 +675,81 @@ function publicDocumentInfo(document) {
   };
 }
 
+function guidedMenuReply(body, question) {
+  const menu = data.settings.menu;
+  const nodes = new Map(menu.nodes.map((node) => [node.id, node]));
+  const entryNodeId = menu.entryNodeId;
+  const suppliedTrail = Array.isArray(body.trail)
+    ? body.trail.filter((id) => typeof id === "string" && nodes.has(id)).slice(-40)
+    : [];
+  let trail = suppliedTrail[0] === entryNodeId ? suppliedTrail : [entryNodeId];
+  let currentNodeId = typeof body.nodeId === "string" && nodes.has(body.nodeId)
+    ? body.nodeId
+    : entryNodeId;
+  if (trail.at(-1) !== currentNodeId) trail = currentNodeId === entryNodeId
+    ? [entryNodeId]
+    : [entryNodeId, currentNodeId];
+
+  const action = body.action;
+  const normalizedQuestion = question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (!body.nodeId) {
+    currentNodeId = entryNodeId;
+    trail = [entryNodeId];
+  } else if (action === "home" || /^(?:home|main menu|menu|start over)$/.test(normalizedQuestion)) {
+    currentNodeId = entryNodeId;
+    trail = [entryNodeId];
+  } else if (action === "exit" || /^(?:exit|quit|close)$/.test(normalizedQuestion)) {
+    return {
+      text: "Thanks for visiting AKGEC Skills Foundation. Choose Main menu whenever you’re ready to explore again.",
+      feedbackId: "",
+      learningMode: "guided-menu",
+      menu: { closed: true, nodeId: "", trail: [] },
+    };
+  } else if (action === "back" || /^(?:back|go back|previous)$/.test(normalizedQuestion)) {
+    if (trail.length > 1) trail.pop();
+    currentNodeId = trail.at(-1) || entryNodeId;
+  } else if (body.nodeId) {
+    const node = nodes.get(currentNodeId);
+    const typedNumber = normalizedQuestion.match(/^(\d{1,2})$/);
+    const option = typeof body.optionId === "string"
+      ? node.options.find((item) => item.id === body.optionId)
+      : typedNumber
+        ? node.options[Number(typedNumber[1]) - 1]
+        : node.options.find((item) => item.label.toLowerCase() === normalizedQuestion);
+    if (option) {
+      currentNodeId = option.target;
+      if (trail.at(-1) !== currentNodeId) trail = [...trail, currentNodeId].slice(-40);
+    } else {
+      const current = nodes.get(currentNodeId);
+      return menuResponse(currentNodeId, trail, `Please choose a menu number or tap one of the options below.\n\n${current.message}`);
+    }
+  }
+
+  const currentNode = nodes.get(currentNodeId);
+  const text = currentNodeId === entryNodeId
+    ? `${menu.welcomeText}\n\n${currentNode.message}`
+    : currentNode.message;
+  return menuResponse(currentNodeId, trail, text);
+
+  function menuResponse(nodeId, currentTrail, text) {
+    const node = nodes.get(nodeId);
+    return {
+      text,
+      feedbackId: "",
+      learningMode: "guided-menu",
+      menu: {
+        closed: false,
+        nodeId,
+        trail: currentTrail,
+        options: node.options.map(({ id, label }) => ({ id, label })),
+        canGoBack: currentTrail.length > 1,
+        registrationUrl: node.registrationUrl || (node.showRegistration ? menu.registrationUrl : ""),
+        links: node.links || [],
+      },
+    };
+  }
+}
+
 async function handleApi(request, response, url) {
   if (url.pathname === "/api/config" && request.method === "GET") {
     json(response, 200, safeSettings(data.settings));
@@ -541,50 +768,19 @@ async function handleApi(request, response, url) {
       return true;
     }
     if (safetyRefusal(question)) {
-      json(response, 200, { blocked: true, text: "I can’t help with requests for private credentials, secrets, or explicit adult content. I’m here to support learning and skills development." });
-      return true;
-    }
-    const basicResponse = basicChatResponse(question);
-    if (basicResponse) {
-      json(response, 200, { text: basicResponse, feedbackId: "", learningMode: "conversation" });
-      return true;
-    }
-    const matches = sentenceCandidates(question);
-    const faqMatch = rankFaqMatches(question)[0];
-    if (faqMatch && (!matches.length || faqMatch.lexicalScore >= matches[0].features[0])) {
+      const currentMenu = guidedMenuReply({
+        ...body,
+        action: undefined,
+        optionId: undefined,
+      }, "");
       json(response, 200, {
-        text: faqMatch.entry.answer,
-        feedbackId: registerFeedbackContext(faqMatch.features),
-        learningMode: "keyword-faq",
+        ...currentMenu,
+        blocked: true,
+        text: "I can’t help with that request. I’m here to support learning and skills development.",
       });
       return true;
     }
-    if (matches.length) {
-      const exploring = data.ranker.feedbackCount >= 10 && Math.random() < feedbackExplorationRate;
-      const selected = exploring && matches.length > 1
-        ? matches[Math.floor(Math.random() * Math.min(matches.length, 3))]
-        : matches[0];
-      json(response, 200, {
-        text: selected.sentence,
-        feedbackId: registerFeedbackContext(selected.features),
-        learningMode: "contextual-bandit",
-      });
-    }
-    const officialMatches = sentenceCandidates(question, [foundationKnowledge]);
-    if (officialMatches.length) {
-      const selected = officialMatches[0];
-      json(response, 200, {
-        text: selected.sentence,
-        feedbackId: registerFeedbackContext(selected.features),
-        learningMode: "contextual-bandit",
-      });
-      return true;
-    } else {
-      json(response, 200, {
-        text: "I’m here to help with AKGEC Skills Foundation enquiries, including courses, internships, training, industrial services and startup incubation. I couldn’t find confirmed information for that question. Contact skills@akgec.ac.in or +91 9910249199 for assistance.",
-        feedbackId: "",
-      });
-    }
+    json(response, 200, guidedMenuReply(body, question));
     return true;
   }
 
@@ -665,6 +861,26 @@ async function handleApi(request, response, url) {
 
   if (!isAdmin(request)) {
     json(response, 401, { error: "Sign in to continue." });
+    return true;
+  }
+
+  if (url.pathname === "/api/admin/menu" && request.method === "PUT") {
+    if (!requestOriginIsSame(request)) {
+      json(response, 403, { error: "This menu update request was rejected." });
+      return true;
+    }
+    const body = await readJson(request);
+    try {
+      data.settings = { ...data.settings, menu: normalizeGuidedMenu(body.menu) };
+    } catch (error) {
+      if (error.message.startsWith("The guided menu configuration is invalid.")) {
+        json(response, 400, { error: error.message });
+        return true;
+      }
+      throw error;
+    }
+    await saveData();
+    json(response, 200, { menu: data.settings.menu });
     return true;
   }
 

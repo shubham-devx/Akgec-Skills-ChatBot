@@ -355,3 +355,31 @@ body[data-theme="violet"] { --purple: #7061d8; --purple-dark: #5849c2; }
   .learning-consent strong { font-size: 10px; }
   .consent-lock { padding-top: 2px; font-size: 8px; }
 }
+
+.menu-start-grid { gap: 12px; }
+.menu-start-option { min-height: 66px; gap: 13px; padding: 14px 16px; }
+.menu-start-option strong { flex: 1; font-size: 16px; line-height: 1.4; }
+.guided-menu-number { width: 30px; height: 30px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #e4e1fa; border-radius: 9px; color: #6758ca; background: #f4f2ff; font-size: 14px; font-weight: 700; }
+.menu-hint { padding: 8px 2px 0; color: #9295a6; font-size: 12px; text-align: center; }
+.guided-menu-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 15px; }
+.guided-menu-options { width: min(100%, 520px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.guided-menu-option { min-width: 0; min-height: 48px; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid #e7eaf0; border-radius: 11px; color: #35445c; background: white; font-size: 15px; line-height: 1.4; text-align: left; cursor: pointer; transition: border-color .2s, background .2s, transform .2s; }
+.guided-menu-option:hover { transform: translateY(-1px); border-color: #bcb4ed; background: #fbfaff; }
+.guided-menu-option > span:last-child { flex: 1; }
+.guided-menu-option .guided-menu-number { width: 27px; height: 27px; border-radius: 8px; font-size: 13px; }
+.guided-menu-link { display: inline-flex; min-height: 40px; align-items: center; padding: 8px 12px; border: 1px solid #e2def7; border-radius: 9px; color: #5b4db9; background: #f8f7ff; font-size: 14px; font-weight: 650; text-decoration: none; }
+.guided-menu-link:hover { border-color: #bcb4ed; background: #f0edff; }
+.guided-menu-navigation { display: flex; flex-wrap: wrap; gap: 8px; }
+.guided-menu-navigation button { min-height: 38px; padding: 7px 12px; border: 1px solid #e6e8ee; border-radius: 9px; color: #58667c; background: white; font-size: 14px; cursor: pointer; }
+.guided-menu-navigation button:hover { border-color: #c8c3e8; color: #5548b0; }
+.message-text { font-size: 16px; }
+.message-heading strong { font-size: 14px; }
+.message-heading span { font-size: 12px; }
+.prompt-grid .menu-start-option strong { font-size: 16px; }
+
+@media (max-width: 640px) {
+  .guided-menu-options { grid-template-columns: 1fr; }
+  .menu-start-option { min-height: 59px; }
+  .menu-start-option strong, .prompt-grid .menu-start-option strong { font-size: 15px; }
+  .menu-hint { font-size: 11px; }
+}

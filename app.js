@@ -16,9 +16,9 @@ const elements = {
   heroTitle: document.querySelector("#heroTitle"),
   historyList: document.querySelector("#historyList"),
   historySearch: document.querySelector("#historySearch"),
-  learningConsent: document.querySelector("#learningConsent"),
   messageInput: document.querySelector("#messageInput"),
   messages: document.querySelector("#messages"),
+  startMenu: document.querySelector("#startMenu"),
   mobileBackdrop: document.querySelector("#mobileBackdrop"),
   newChat: document.querySelector("#newChat"),
   openSidebar: document.querySelector("#openSidebar"),
@@ -32,12 +32,6 @@ const elements = {
 let chats = readChats();
 let activeChatId = null;
 let toastTimeout;
-
-try {
-  elements.learningConsent.checked = localStorage.getItem("akgec-skillmate-learning-consent-v1") === "yes";
-} catch (error) {
-  console.error("Could not read the feedback preference.", error);
-}
 
 function readChats() {
   try {
@@ -65,6 +59,7 @@ function readChats() {
         feedbackId: typeof message.feedbackId === "string" ? message.feedbackId.slice(0, 100) : "",
         feedbackSubmitted: Boolean(message.feedbackSubmitted),
         feedbackPending: false,
+        menu: message.menu && typeof message.menu === "object" ? message.menu : null,
       })),
     })).slice(0, MAX_STORED_CHATS);
   } catch (error) {
@@ -149,6 +144,96 @@ function renderHistory() {
   });
 }
 
+function currentMenu() {
+  const messages = currentChat()?.messages || [];
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].role === "assistant" && messages[index].menu) return messages[index].menu;
+  }
+  return null;
+}
+
+function renderMenuControls(message) {
+  const menu = message.menu;
+  if (!menu || (!menu.closed && !Array.isArray(menu.options)) || !currentChat()) return null;
+  const controls = document.createElement("div");
+  controls.className = "guided-menu-controls";
+  const choices = document.createElement("div");
+  choices.className = "guided-menu-options";
+  (menu.options || []).forEach((option, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "guided-menu-option";
+    const number = document.createElement("span");
+    number.className = "guided-menu-number";
+    number.textContent = String(index + 1);
+    const label = document.createElement("span");
+    label.textContent = option.label;
+    button.append(number, label);
+    button.addEventListener("click", () => submitMessage(`${index + 1}. ${option.label}`, {
+      nodeId: menu.nodeId,
+      trail: menu.trail,
+      optionId: option.id,
+    }));
+    choices.append(button);
+  });
+  controls.append(choices);
+
+  const safeExternalUrl = (value) => {
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" ? url.href : "";
+    } catch {
+      return "";
+    }
+  };
+  const registrationUrl = safeExternalUrl(menu.registrationUrl);
+  if (registrationUrl) {
+    const registration = document.createElement("a");
+    registration.className = "guided-menu-link registration-link";
+    registration.href = registrationUrl;
+    registration.target = "_blank";
+    registration.rel = "noopener noreferrer";
+    registration.textContent = "Start registration ↗";
+    controls.append(registration);
+  }
+  if (Array.isArray(menu.links)) {
+    menu.links.forEach((item) => {
+      const url = safeExternalUrl(item.url);
+      if (!url) return;
+      const link = document.createElement("a");
+      link.className = "guided-menu-link";
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = `${item.label} ↗`;
+      controls.append(link);
+    });
+  }
+
+  const navigation = document.createElement("div");
+  navigation.className = "guided-menu-navigation";
+  const addNavigation = (label, action) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.addEventListener("click", () => submitMessage(label, {
+      nodeId: menu.nodeId,
+      trail: menu.trail,
+      action,
+    }));
+    navigation.append(button);
+  };
+  if (menu.closed) {
+    addNavigation("Main menu", "home");
+  } else {
+    if (menu.canGoBack) addNavigation("← Back", "back");
+    if (menu.nodeId !== "home") addNavigation("Main menu", "home");
+    addNavigation("Exit", "exit");
+  }
+  controls.append(navigation);
+  return controls;
+}
+
 function renderMessages() {
   const chat = currentChat();
   elements.messages.replaceChildren();
@@ -201,23 +286,33 @@ function renderMessages() {
     });
     body.append(heading, text);
 
-    const tools = document.createElement("div");
-    tools.className = "message-tools";
-    tools.setAttribute("aria-label", "Rate this response");
-    [["up", "Helpful", '<path d="M7 10v11H4V10h3Zm0 0 5-7 2 1-1 6h6a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7"/>'], ["down", "Not helpful", '<path d="M7 14V3H4v11h3Zm0 0 5 7 2-1-1-6h6a2 2 0 0 0 2-2l-1-7a2 2 0 0 0-2-2H7"/>']].forEach(([rating, label, iconPath]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = message.feedback === rating ? "selected" : "";
-      button.setAttribute("aria-label", label);
-      button.title = label;
-      button.disabled = Boolean(message.feedbackSubmitted || message.feedbackPending);
-      button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${iconPath}</svg>`;
-      button.addEventListener("click", () => rateMessage(chat.id, index, rating));
-      tools.append(button);
-    });
-    body.append(tools);
+    const menuControls = renderMenuControls(message);
+    if (menuControls) body.append(menuControls);
     wrapper.append(avatar, body);
     elements.messages.append(wrapper);
+  });
+}
+
+function renderStartMenu(menu) {
+  const root = menu?.nodes?.find((node) => node.id === menu.entryNodeId);
+  elements.startMenu.replaceChildren();
+  if (!root) return;
+  root.options.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "prompt-card menu-start-option";
+    const number = document.createElement("span");
+    number.className = "guided-menu-number";
+    number.textContent = String(index + 1);
+    const label = document.createElement("strong");
+    label.textContent = option.label;
+    button.append(number, label);
+    button.addEventListener("click", () => submitMessage(`${index + 1}. ${option.label}`, {
+      nodeId: root.id,
+      trail: [root.id],
+      optionId: option.id,
+    }));
+    elements.startMenu.append(button);
   });
 }
 
@@ -271,7 +366,7 @@ function safetyRefusal(text) {
   return /\b(passwords?|passcodes?|api[\s_-]?keys?|access[\s_-]?tokens?|secrets?|private keys?|credentials?|confidential|classified|leaked data|system prompts?|hidden instructions|hack(?:ing)? (?:an? )?account|porn(?:ography)?|xxx|nudes?|sex(?:ual)?|nsfw|erotic|fetish|masturbat(?:e|ion|ing)?|orgasm|hookups?|onlyfans)\b/i.test(text);
 }
 
-async function submitMessage(text) {
+async function submitMessage(text, selection = {}) {
   const content = text.trim();
   if (!content) return;
   if (content.length > 2000) {
@@ -279,6 +374,13 @@ async function submitMessage(text) {
     return;
   }
 
+  const previousMenu = currentMenu();
+  const menuRequest = {
+    nodeId: selection.nodeId ?? previousMenu?.nodeId,
+    trail: selection.trail ?? previousMenu?.trail,
+    optionId: selection.optionId,
+    action: selection.action,
+  };
   let chat = currentChat();
   if (!chat) {
     chat = {
@@ -300,6 +402,7 @@ async function submitMessage(text) {
     pending: true,
     feedbackId: "",
     feedbackSubmitted: false,
+    menu: null,
   };
   chat.messages.push(pendingMessage);
   persistChats();
@@ -312,13 +415,14 @@ async function submitMessage(text) {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: content }),
+      body: JSON.stringify({ question: content, ...menuRequest }),
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "The answer service is unavailable.");
     pendingMessage.pending = false;
     pendingMessage.text = result.text;
     pendingMessage.feedbackId = result.feedbackId || "";
+    pendingMessage.menu = result.menu || (result.blocked ? menuRequest : null);
     pendingMessage.timestamp = Date.now();
     chats = [chat, ...chats.filter((item) => item.id !== chat.id)].slice(0, MAX_STORED_CHATS);
     persistChats();
@@ -337,55 +441,6 @@ async function submitMessage(text) {
   }
 }
 
-async function rateMessage(chatId, messageIndex, rating) {
-  const chat = chats.find((item) => item.id === chatId);
-  const message = chat?.messages[messageIndex];
-  if (!message || message.role !== "assistant" || message.feedbackSubmitted || message.feedbackPending) return;
-  const consent = elements.learningConsent.checked;
-  if (message.feedback === rating && !consent) {
-    message.feedback = null;
-    persistChats();
-    renderMessages();
-    return;
-  }
-  const previousRating = message.feedback;
-  message.feedback = message.feedback === rating && consent && message.feedbackId
-    ? rating
-    : message.feedback === rating ? null : rating;
-  persistChats();
-  renderMessages();
-  if (!consent || !message.feedbackId || !message.feedback) {
-    showToast(consent
-      ? "Ask a new question to give anonymous learning feedback on its answer."
-      : "Rating saved in this browser. Opt in to anonymously improve passage ranking.");
-    return;
-  }
-
-  message.feedbackPending = true;
-  renderMessages();
-  try {
-    const response = await fetch("/api/feedback", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ feedbackId: message.feedbackId, rating: message.feedback }),
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Your rating could not be recorded.");
-    message.feedbackSubmitted = true;
-    message.feedbackId = "";
-    showToast("Thanks — your anonymous rating updated SkillMate’s passage ranking.");
-  } catch (error) {
-    message.feedback = previousRating;
-    showToast(error.message === "Failed to fetch"
-      ? "Could not reach the feedback service. Your rating was not sent."
-      : error.message);
-  } finally {
-    message.feedbackPending = false;
-    persistChats();
-    renderMessages();
-  }
-}
-
 async function loadSiteSettings() {
   try {
     const response = await fetch("/api/config");
@@ -394,11 +449,12 @@ async function loadSiteSettings() {
     elements.brandName.textContent = settings.brandName;
     elements.heroTitle.textContent = settings.headline;
     elements.heroDescription.textContent = settings.description;
+    renderStartMenu(settings.menu);
     document.body.dataset.theme = settings.theme;
     document.title = `${settings.brandName} — Learn. Build. Grow.`;
   } catch (error) {
     console.error("Could not load SkillMate website settings.", error);
-    showToast("Start SkillMate with `npm start` to connect to the shared knowledge base.");
+    showToast("Could not load the guided menu. Please refresh to try again.");
   }
 }
 
@@ -444,18 +500,6 @@ document.querySelectorAll(".prompt-card").forEach((button) => {
 elements.newChat.addEventListener("click", startNewChat);
 elements.clearHistory.addEventListener("click", deleteAllChats);
 elements.historySearch.addEventListener("input", renderHistory);
-elements.learningConsent.addEventListener("change", () => {
-  try {
-    localStorage.setItem("akgec-skillmate-learning-consent-v1", elements.learningConsent.checked ? "yes" : "no");
-    showToast(elements.learningConsent.checked
-      ? "Anonymous feedback is on. Ratings are sent without your question, answer, or identity."
-      : "Anonymous feedback is off. Ratings stay in this browser.");
-  } catch (error) {
-    console.error("Could not save the feedback preference.", error);
-    elements.learningConsent.checked = false;
-    showToast("Could not save your preference. Anonymous feedback remains off.");
-  }
-});
 elements.openSidebar.addEventListener("click", () => {
   elements.sidebar.classList.add("open");
   elements.mobileBackdrop.classList.add("visible");
