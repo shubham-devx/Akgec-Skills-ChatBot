@@ -154,6 +154,29 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
   });
 
+  await t.test("answers greetings and common Foundation questions before uploads", async () => {
+    const greeting = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "hi" }),
+    })).json();
+    assert.equal(greeting.text, "Hi! Welcome to AKGEC Skills Foundation. What can I help you with today?");
+    assert.equal(greeting.learningMode, "conversation");
+    assert.equal(greeting.feedbackId, "");
+
+    const training = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "What training programs does AKGEC Skills Foundation offer?" }),
+    })).json();
+    assert.match(training.text, /technical and vocational training programs/i);
+    assert.doesNotMatch(training.text, /akgecskills\.in|source/i);
+
+    const contact = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "What is the contact email for AKGEC Skills?" }),
+    })).json();
+    assert.match(contact.text, /skills@akgec\.ac\.in/);
+  });
+
   await t.test("rejects cross-origin and incorrect admin sign-in", async () => {
     const crossOrigin = await api("/api/admin/login", {
       method: "POST",

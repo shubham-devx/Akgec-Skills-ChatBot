@@ -41,6 +41,20 @@ const retrievalStopWords = new Set([
   "get", "give", "find", "know", "help", "explain", "show", "me", "my", "a",
   "an", "to", "of", "in", "on", "at", "by", "or", "as", "if", "do", "did",
 ]);
+const foundationKnowledge = {
+  text: [
+    "AKGEC Skills Foundation (ASF) is an ISO 9001:2015 certified and NABL accredited facility, and a joint initiative of Ajay Kumar Garg Engineering College (AKGEC) and the National Skill Development Corporation (NSDC), Ministry of Skill Development and Entrepreneurship, Government of India.",
+    "AKGEC Skills Foundation offers technical and vocational training programs for engineering, diploma, ITI, Class 12, and Class 10 students to help them become industry ready and globally employable.",
+    "The AKGEC Skills website lists training areas including robotics, automation, manufacturing, and welding.",
+    "Its Centres of Excellence include the Industrial Pneumatics Knowledge Center, Industrial Robotics Training Center, and AKGEC Drone Academy.",
+    "AKGEC Skills Foundation training programs include Industrial Robot Programming, Robot Cell Designer, Robot Programming Basics, Advanced Robotics, Robotics Workshop, Industrial Robotics internship, and Robotic Process Automation.",
+    "The Foundation's mission includes research in automation, robotics, and advanced manufacturing, engineering education, and collaboration with industry and government research agencies.",
+    "The Foundation's vision is to train young professionals and support industry through training, research, and product development in automation, robotics, and advanced manufacturing.",
+    "Listed industrial services include 3D modelling, structural analysis and optimization, CNC machining, calibration, non-destructive testing, 3D printing, laser cutting and engraving, PCB manufacturing, factory automation, hydraulic and pneumatic systems, and industrial IoT.",
+    "AKGEC Skills Foundation is located at 27th Km Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad - 201015.",
+    "AKGEC Skills Foundation's contact email is skills@akgec.ac.in and its phone number is +91 9910249199.",
+  ].join("\n"),
+};
 const defaultSettings = {
   brandName: "AKGEC SkillMate",
   headline: "Big goals start with one question.",
@@ -295,14 +309,34 @@ function safetyRefusal(question) {
   return sensitive.test(question) || adult.test(question);
 }
 
-function sentenceCandidates(question) {
+function basicChatResponse(question) {
+  const normalized = question.toLowerCase().trim().replace(/[\s.!?,;:]+/g, " ");
+  if (/^(?:hi+|hello+|hey+|howdy|namaste|good morning|good afternoon|good evening)(?: there)?$/.test(normalized)) {
+    return "Hi! Welcome to AKGEC Skills Foundation. What can I help you with today?";
+  }
+  if (/^(?:how are you|how are you doing)$/.test(normalized)) {
+    return "I’m doing well, thanks for asking! What would you like to know about AKGEC Skills Foundation?";
+  }
+  if (/^(?:who are you|what can you do|help)$/.test(normalized)) {
+    return "I’m AKGEC SkillMate, here to help with information about AKGEC Skills Foundation, its training programs, Centres of Excellence, and services.";
+  }
+  if (/^(?:thanks|thank you|thank you so much)$/.test(normalized)) {
+    return "You’re welcome! What else would you like to know about AKGEC Skills Foundation?";
+  }
+  if (/^(?:bye|goodbye|see you)$/.test(normalized)) {
+    return "Goodbye! You’re welcome back anytime you have a question for AKGEC Skills Foundation.";
+  }
+  return "";
+}
+
+function sentenceCandidates(question, documents = data.documents) {
   const keywords = [...new Set(question.toLowerCase().match(/[a-z0-9]{3,}/g) || [])]
     .filter((word) => !retrievalStopWords.has(word));
   if (!keywords.length) return [];
   if (keywords.length === 1 && keywords[0].length < 4) return [];
   const minMatches = keywords.length <= 2 ? 1 : Math.max(2, Math.ceil(keywords.length * 0.34));
   const normalizedQuestion = question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-  return data.documents.flatMap((document) =>
+  return documents.flatMap((document) =>
     document.text.split(/(?<=[.!?])\s+|\n+/).map((sentence) => {
       const normalized = sentence.trim();
       const sentenceTokens = normalized.toLowerCase().match(/[a-z0-9]{3,}/g) || [];
@@ -382,7 +416,13 @@ async function handleApi(request, response, url) {
       json(response, 200, { blocked: true, text: "I can’t help with requests for private credentials, secrets, or explicit adult content. I’m here to support learning and skills development." });
       return true;
     }
+    const basicResponse = basicChatResponse(question);
+    if (basicResponse) {
+      json(response, 200, { text: basicResponse, feedbackId: "", learningMode: "conversation" });
+      return true;
+    }
     const matches = sentenceCandidates(question);
+    if (!matches.length) matches.push(...sentenceCandidates(question, [foundationKnowledge]));
     if (matches.length) {
       const exploring = data.ranker.feedbackCount >= 10 && Math.random() < feedbackExplorationRate;
       const selected = exploring && matches.length > 1

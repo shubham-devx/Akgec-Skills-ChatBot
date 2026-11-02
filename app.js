@@ -25,6 +25,7 @@ const elements = {
   sendButton: document.querySelector("#sendButton"),
   sidebar: document.querySelector("#sidebar"),
   toast: document.querySelector("#toast"),
+  timeGreeting: document.querySelector("#timeGreeting"),
   welcome: document.querySelector("#welcome"),
 };
 
@@ -86,6 +87,12 @@ function showToast(message) {
   elements.toast.classList.add("visible");
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => elements.toast.classList.remove("visible"), 3600);
+}
+
+function setTimeGreeting() {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  elements.timeGreeting.textContent = `${greeting} — welcome to AKGEC Skills Foundation`;
 }
 
 function currentChat() {
@@ -472,5 +479,6 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+setTimeGreeting();
 updateScreen();
 loadSiteSettings();
