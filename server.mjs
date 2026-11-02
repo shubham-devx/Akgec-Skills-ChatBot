@@ -59,8 +59,9 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const adminPassword = process.env.ADMIN_PASSWORD;
-if ((!adminPassword && !process.env.VERCEL) || (adminPassword && adminPassword.length < 16)) {
-  throw new Error("Set ADMIN_PASSWORD to a strong passphrase of at least 16 characters before starting. Do not put it in source code.");
+const validAdminPassword = adminPassword && (/^\d{9}$/.test(adminPassword) || adminPassword.length >= 16);
+if ((!adminPassword && !process.env.VERCEL) || (adminPassword && !validAdminPassword)) {
+  throw new Error("Set ADMIN_PASSWORD to exactly 9 digits or a passphrase of at least 16 characters. Do not put it in source code.");
 }
 
 const passwordSalt = randomBytes(16);
