@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f6fb" />
+    <title>Admin Studio — AKGEC SkillMate</title>
+    <link rel="stylesheet" href="admin.css" />
+    <script src="admin.js" defer></script>
+  </head>
+  <body>
+    <main class="admin-page">
+      <section class="login-card" id="loginPanel" hidden>
+        <a class="admin-brand" href="/" aria-label="Back to AKGEC SkillMate">
+          <img class="admin-logo" src="/akgec-skills-logo.png" alt="AKGEC Skills" />
+          <span><strong>AKGEC SkillMate</strong><small>ADMIN STUDIO</small></span>
+        </a>
+        <span class="eyebrow">RESTRICTED ACCESS</span>
+        <h1>Welcome back.</h1>
+        <p class="login-intro">Sign in to manage approved learning content and chatbot appearance.</p>
+        <form id="loginForm">
+          <label for="adminPassword">Admin passphrase</label>
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" required maxlength="256" placeholder="Enter your admin passphrase" />
+          <p class="form-error" id="loginError" role="alert" hidden></p>
+          <button class="primary-button" type="submit" id="loginSubmit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <a class="back-link" href="/">← Back to SkillMate</a>
+        <p class="security-note">Your sign-in is checked by the server. Admin controls are never exposed in the public chat.</p>
+      </section>
+
+      <section class="dashboard" id="dashboard" hidden>
+        <header class="admin-topbar">
+          <a class="admin-brand" href="/" aria-label="Back to AKGEC SkillMate">
+            <img class="admin-logo" src="/akgec-skills-logo.png" alt="AKGEC Skills" />
+            <span><strong>AKGEC SkillMate</strong><small>ADMIN STUDIO</small></span>
+          </a>
+          <div class="topbar-right">
+            <a class="public-link" href="/" target="_blank" rel="noopener">View public chat <span aria-hidden="true">↗</span></a>
+            <button class="text-button" id="logoutButton" type="button">Sign out</button>
+          </div>
+        </header>
+
+        <div class="dashboard-content">
+          <section class="dashboard-heading">
+            <div>
+              <span class="eyebrow">AKGEC SKILLS FOUNDATION</span>
+              <h1>Admin studio</h1>
+              <p>Manage the approved knowledge that SkillMate can search and share with learners.</p>
+            </div>
+            <span class="status-pill"><i></i> PRIVATE WORKSPACE</span>
+          </section>
+
+          <div class="admin-tabs" role="tablist" aria-label="Admin sections">
+            <button class="admin-tab active" id="knowledgeTab" role="tab" aria-selected="true" aria-controls="knowledgePanel">Knowledge base</button>
+            <button class="admin-tab" id="customizeTab" role="tab" aria-selected="false" aria-controls="customizePanel">Website appearance</button>
+          </div>
+
+          <section class="admin-panel" id="knowledgePanel" role="tabpanel" aria-labelledby="knowledgeTab">
+            <div class="panel-heading">
+              <div><h2>Knowledge base</h2><p>Add approved documents. New information is available to all visitors immediately.</p></div>
+              <span class="count-pill" id="documentCount">0 documents</span>
+            </div>
+            <div class="knowledge-grid">
+              <form class="upload-card" id="fileForm">
+                <span class="section-kicker">01 / UPLOAD A DOCUMENT</span>
+                <h3>Bring learning material in.</h3>
+                <p>Upload a PDF or a text/Markdown file. PDF text is extracted on the server. Scanned image PDFs need OCR before they can be searched.</p>
+                <label class="drop-area" for="knowledgeFile">
+                  <span class="upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v5h14v-5" /></svg>
+                  </span>
+                  <strong id="fileLabel">Choose a PDF, TXT, or MD file</strong>
+                  <small>Maximum 3 MB for PDF · 1 MB for text</small>
+                  <input id="knowledgeFile" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" />
+                </label>
+                <button class="primary-button" type="submit" id="uploadButton">Add to knowledge base <span aria-hidden="true">→</span></button>
+                <p class="form-error" id="uploadError" role="alert" hidden></p>
+              </form>
+
+              <form class="paste-card" id="textForm">
+                <span class="section-kicker">02 / ADD APPROVED TEXT</span>
+                <h3>Paste a helpful answer.</h3>
+                <p>Use official, public information. Avoid passwords, private records, student data, or confidential material.</p>
+                <label for="textName">Source name</label>
+                <input id="textName" name="name" type="text" maxlength="120" placeholder="e.g. Skills Foundation — Programs" required />
+                <label for="knowledgeText">Approved content</label>
+                <textarea id="knowledgeText" name="text" maxlength="1000000" rows="8" placeholder="Paste verified program details, schedules, FAQs, or learning resources…" required></textarea>
+                <button class="secondary-button" type="submit" id="textSubmit">Add approved text</button>
+                <p class="form-error" id="textError" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div class="documents-section">
+              <div class="list-heading"><div><h3>Published materials</h3><p>These are shared with every visitor and used to find relevant answer passages.</p></div></div>
+              <div class="document-list" id="documentList" aria-live="polite"></div>
+            </div>
+            <div class="learning-section">
+              <div class="learning-section-copy">
+                <span class="section-kicker">FEEDBACK-DRIVEN IMPROVEMENT</span>
+                <h3>SkillMate learns which passages help.</h3>
+                <p>With a learner’s opt-in rating, an on-server contextual bandit adjusts which approved passage ranks first. Ratings update retrieval ranking only—not a language model. No question, answer, identity, or IP address is retained with a rating.</p>
+              </div>
+              <div class="learning-stats">
+                <div><strong id="learningFeedbackCount">0</strong><span>anonymous ratings</span></div>
+                <div><strong id="learningModelStatus">Collecting feedback</strong><span>passage ranker</span></div>
+              </div>
+              <button class="reset-learning-button" id="resetLearning" type="button">Reset learned ranking</button>
+              <p class="form-error" id="learningError" role="alert" hidden></p>
+            </div>
+            <aside class="notice">
+              <span class="notice-icon" aria-hidden="true">i</span>
+              <p><strong>This is a small reinforcement-learning feedback loop, not ChatGPT-scale training.</strong> Opted-in ratings update a contextual bandit that ranks retrieved passages. It doesn’t generate new knowledge or train a language model. Learner answers do not show document names.</p>
+            </aside>
+          </section>
+
+          <section class="admin-panel customize-panel" id="customizePanel" role="tabpanel" aria-labelledby="customizeTab" hidden>
+            <div class="panel-heading">
+              <div><h2>Website appearance</h2><p>Keep the learner-facing page focused and easy to read.</p></div>
+              <span class="preview-badge">PUBLIC PAGE</span>
+            </div>
+            <form class="customize-form" id="settingsForm">
+              <div class="field-row">
+                <label for="brandField">Website name <span>Shown in the sidebar and browser title</span></label>
+                <input id="brandField" name="brandName" maxlength="50" required />
+              </div>
+              <div class="field-row">
+                <label for="headlineField">Welcome headline <span>One clear sentence for learners</span></label>
+                <input id="headlineField" name="headline" maxlength="100" required />
+              </div>
+              <div class="field-row">
+                <label for="descriptionField">Welcome description <span>Short guidance on what visitors can ask</span></label>
+                <textarea id="descriptionField" name="description" rows="3" maxlength="240" required></textarea>
+              </div>
+              <fieldset class="theme-field">
+                <legend>Accent color</legend>
+                <div class="theme-options">
+                  <label><input type="radio" name="theme" value="violet" /><span class="theme-swatch violet"></span><span>Violet</span></label>
+                  <label><input type="radio" name="theme" value="blue" /><span class="theme-swatch blue"></span><span>Blue</span></label>
+                  <label><input type="radio" name="theme" value="teal" /><span class="theme-swatch teal"></span><span>Teal</span></label>
+                  <label><input type="radio" name="theme" value="amber" /><span class="theme-swatch amber"></span><span>Amber</span></label>
+                </div>
+              </fieldset>
+              <div class="customize-actions">
+                <p class="form-error" id="settingsError" role="alert" hidden></p>
+                <button class="primary-button" type="submit" id="saveSettings">Save appearance <span aria-hidden="true">→</span></button>
+              </div>
+            </form>
+          </section>
+          <footer class="admin-footer"><span>Changes are stored on this server and shared with public visitors.</span><a href="/">Return to learner chat</a></footer>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

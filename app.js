@@ -1,0 +1,476 @@
+const STORAGE_KEY = "akgec-skillmate-chats-v1";
+const MAX_STORED_CHATS = 40;
+const MAX_STORED_MESSAGES = 100;
+
+const elements = {
+  aboutButton: document.querySelector("#aboutButton"),
+  aboutDialog: document.querySelector("#aboutDialog"),
+  aboutDone: document.querySelector("#aboutDone"),
+  brandName: document.querySelector("#brandName"),
+  clearHistory: document.querySelector("#clearHistory"),
+  closeAbout: document.querySelector("#closeAbout"),
+  closeSidebar: document.querySelector("#closeSidebar"),
+  composer: document.querySelector("#composer"),
+  conversation: document.querySelector("#conversation"),
+  heroDescription: document.querySelector("#heroDescription"),
+  heroTitle: document.querySelector("#heroTitle"),
+  historyList: document.querySelector("#historyList"),
+  historySearch: document.querySelector("#historySearch"),
+  learningConsent: document.querySelector("#learningConsent"),
+  messageInput: document.querySelector("#messageInput"),
+  messages: document.querySelector("#messages"),
+  mobileBackdrop: document.querySelector("#mobileBackdrop"),
+  newChat: document.querySelector("#newChat"),
+  openSidebar: document.querySelector("#openSidebar"),
+  sendButton: document.querySelector("#sendButton"),
+  sidebar: document.querySelector("#sidebar"),
+  toast: document.querySelector("#toast"),
+  welcome: document.querySelector("#welcome"),
+};
+
+let chats = readChats();
+let activeChatId = null;
+let toastTimeout;
+
+try {
+  elements.learningConsent.checked = localStorage.getItem("akgec-skillmate-learning-consent-v1") === "yes";
+} catch (error) {
+  console.error("Could not read the feedback preference.", error);
+}
+
+function readChats() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((chat) =>
+      chat &&
+      typeof chat.id === "string" &&
+      typeof chat.title === "string" &&
+      Array.isArray(chat.messages),
+    ).map((chat) => ({
+      id: chat.id,
+      title: chat.title.slice(0, 100),
+      messages: chat.messages.filter((message) =>
+        message &&
+        ["user", "assistant"].includes(message.role) &&
+        typeof message.content === "string" &&
+        (message.role === "user" || typeof message.text === "string"),
+      ).slice(-MAX_STORED_MESSAGES).map((message) => ({
+        role: message.role,
+        content: message.content.slice(0, 2000),
+        text: typeof message.text === "string" ? message.text.slice(0, 5000) : "",
+        timestamp: Number.isFinite(message.timestamp) ? message.timestamp : Date.now(),
+        feedback: ["up", "down"].includes(message.feedback) ? message.feedback : null,
+        feedbackId: typeof message.feedbackId === "string" ? message.feedbackId.slice(0, 100) : "",
+        feedbackSubmitted: Boolean(message.feedbackSubmitted),
+        feedbackPending: false,
+      })),
+    })).slice(0, MAX_STORED_CHATS);
+  } catch (error) {
+    console.error("Could not read saved SkillMate conversations.", error);
+    return [];
+  }
+}
+
+function persistChats() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+  } catch (error) {
+    console.error("Could not save SkillMate conversations.", error);
+    showToast("Chat history could not be saved. Check this browser's storage settings.");
+  }
+}
+
+function showToast(message) {
+  elements.toast.textContent = message;
+  elements.toast.classList.add("visible");
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => elements.toast.classList.remove("visible"), 3600);
+}
+
+function currentChat() {
+  return chats.find((chat) => chat.id === activeChatId) || null;
+}
+
+function renderHistory() {
+  const search = elements.historySearch.value.trim().toLowerCase();
+  const filtered = chats.filter((chat) =>
+    chat.title.toLowerCase().includes(search) ||
+    chat.messages.some((message) => message.content.toLowerCase().includes(search)),
+  );
+  elements.historyList.replaceChildren();
+
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "history-empty";
+    empty.textContent = chats.length ? "No conversations match your search." : "Your conversations will appear here.";
+    elements.historyList.append(empty);
+    return;
+  }
+
+  filtered.forEach((chat) => {
+    const row = document.createElement("div");
+    row.className = `history-row${chat.id === activeChatId ? " active" : ""}`;
+    row.setAttribute("role", "button");
+    row.tabIndex = 0;
+    row.setAttribute("aria-label", `Open conversation: ${chat.title}`);
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    icon.setAttribute("viewBox", "0 0 24 24");
+    icon.setAttribute("aria-hidden", "true");
+    icon.innerHTML = '<path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-6a7.5 7.5 0 1 1 17-3.5Z"/><path d="M8 10h8M8 14h5"/>';
+    const title = document.createElement("span");
+    title.textContent = chat.title;
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "history-delete";
+    remove.setAttribute("aria-label", `Delete conversation: ${chat.title}`);
+    remove.title = "Delete conversation";
+    remove.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+    remove.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteChat(chat.id);
+    });
+    row.append(icon, title, remove);
+    row.addEventListener("click", () => openChat(chat.id));
+    row.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openChat(chat.id);
+      }
+    });
+    elements.historyList.append(row);
+  });
+}
+
+function renderMessages() {
+  const chat = currentChat();
+  elements.messages.replaceChildren();
+  elements.welcome.hidden = Boolean(chat?.messages.length);
+  if (!chat) return;
+
+  chat.messages.forEach((message, index) => {
+    const wrapper = document.createElement("article");
+    wrapper.className = `message ${message.role}`;
+    if (message.role === "user") {
+      const body = document.createElement("div");
+      body.className = "message-body";
+      body.textContent = message.content;
+      wrapper.append(body);
+      elements.messages.append(wrapper);
+      return;
+    }
+
+    const avatar = document.createElement("div");
+    avatar.className = "message-avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = "✳";
+    const body = document.createElement("div");
+    body.className = "message-body";
+    const heading = document.createElement("div");
+    heading.className = "message-heading";
+    const name = document.createElement("strong");
+    name.textContent = "SkillMate";
+    const time = document.createElement("span");
+    time.textContent = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date(message.timestamp));
+    heading.append(name, time);
+
+    if (message.pending) {
+      const dots = document.createElement("div");
+      dots.className = "typing-dots";
+      dots.setAttribute("aria-label", "Finding an answer");
+      dots.innerHTML = "<i></i><i></i><i></i>";
+      body.append(heading, dots);
+      wrapper.append(avatar, body);
+      elements.messages.append(wrapper);
+      return;
+    }
+
+    const text = document.createElement("div");
+    text.className = "message-text";
+    (message.text || "").split(/\n{2,}/).filter(Boolean).forEach((paragraph) => {
+      const paragraphElement = document.createElement("p");
+      paragraphElement.textContent = paragraph;
+      text.append(paragraphElement);
+    });
+    body.append(heading, text);
+
+    const tools = document.createElement("div");
+    tools.className = "message-tools";
+    tools.setAttribute("aria-label", "Rate this response");
+    [["up", "Helpful", '<path d="M7 10v11H4V10h3Zm0 0 5-7 2 1-1 6h6a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7"/>'], ["down", "Not helpful", '<path d="M7 14V3H4v11h3Zm0 0 5 7 2-1-1-6h6a2 2 0 0 0 2-2l-1-7a2 2 0 0 0-2-2H7"/>']].forEach(([rating, label, iconPath]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = message.feedback === rating ? "selected" : "";
+      button.setAttribute("aria-label", label);
+      button.title = label;
+      button.disabled = Boolean(message.feedbackSubmitted || message.feedbackPending);
+      button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${iconPath}</svg>`;
+      button.addEventListener("click", () => rateMessage(chat.id, index, rating));
+      tools.append(button);
+    });
+    body.append(tools);
+    wrapper.append(avatar, body);
+    elements.messages.append(wrapper);
+  });
+}
+
+function updateScreen({ scroll = false } = {}) {
+  renderHistory();
+  renderMessages();
+  if (scroll) elements.conversation.scrollTop = elements.conversation.scrollHeight;
+}
+
+function startNewChat() {
+  activeChatId = null;
+  elements.messageInput.value = "";
+  elements.messageInput.style.height = "auto";
+  updateScreen();
+  closeSidebar();
+  elements.messageInput.focus();
+}
+
+function openChat(id) {
+  activeChatId = id;
+  updateScreen({ scroll: true });
+  closeSidebar();
+}
+
+function deleteChat(id) {
+  chats = chats.filter((chat) => chat.id !== id);
+  if (activeChatId === id) activeChatId = null;
+  persistChats();
+  updateScreen();
+  showToast("Conversation deleted from this browser.");
+}
+
+function deleteAllChats() {
+  if (!chats.length) {
+    showToast("There is no chat history to delete.");
+    return;
+  }
+  chats = [];
+  activeChatId = null;
+  persistChats();
+  updateScreen();
+  showToast("All chat history deleted from this browser.");
+}
+
+function titleFromMessage(text) {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  return normalized.length > 34 ? `${normalized.slice(0, 34).trimEnd()}…` : normalized;
+}
+
+function safetyRefusal(text) {
+  return /\b(passwords?|passcodes?|api[\s_-]?keys?|access[\s_-]?tokens?|secrets?|private keys?|credentials?|confidential|classified|leaked data|system prompts?|hidden instructions|hack(?:ing)? (?:an? )?account|porn(?:ography)?|xxx|nudes?|sex(?:ual)?|nsfw|erotic|fetish|masturbat(?:e|ion|ing)?|orgasm|hookups?|onlyfans)\b/i.test(text);
+}
+
+async function submitMessage(text) {
+  const content = text.trim();
+  if (!content) return;
+  if (content.length > 2000) {
+    showToast("Please keep your question under 2,000 characters.");
+    return;
+  }
+
+  let chat = currentChat();
+  if (!chat) {
+    chat = {
+      id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      title: safetyRefusal(content) ? "Safety reminder" : titleFromMessage(content),
+      messages: [],
+    };
+    chats.unshift(chat);
+    activeChatId = chat.id;
+  }
+
+  const blocked = safetyRefusal(content);
+  if (!blocked) chat.messages.push({ role: "user", content, timestamp: Date.now() });
+  const pendingMessage = {
+    role: "assistant",
+    content: "",
+    text: "",
+    timestamp: Date.now(),
+    pending: true,
+    feedbackId: "",
+    feedbackSubmitted: false,
+  };
+  chat.messages.push(pendingMessage);
+  persistChats();
+  elements.messageInput.value = "";
+  elements.messageInput.style.height = "auto";
+  elements.sendButton.disabled = true;
+  updateScreen({ scroll: true });
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: content }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "The answer service is unavailable.");
+    pendingMessage.pending = false;
+    pendingMessage.text = result.text;
+    pendingMessage.feedbackId = result.feedbackId || "";
+    pendingMessage.timestamp = Date.now();
+    chats = [chat, ...chats.filter((item) => item.id !== chat.id)].slice(0, MAX_STORED_CHATS);
+    persistChats();
+    updateScreen({ scroll: true });
+  } catch (error) {
+    pendingMessage.pending = false;
+    pendingMessage.text = error.message === "Failed to fetch"
+        ? "I couldn’t reach the answer service just now. Please try again in a moment."
+        : error.message;
+    pendingMessage.timestamp = Date.now();
+    persistChats();
+    updateScreen();
+    showToast(error.message === "Failed to fetch"
+      ? "Can’t reach SkillMate. Start the server with `npm start` and open its local URL."
+      : error.message);
+  }
+}
+
+async function rateMessage(chatId, messageIndex, rating) {
+  const chat = chats.find((item) => item.id === chatId);
+  const message = chat?.messages[messageIndex];
+  if (!message || message.role !== "assistant" || message.feedbackSubmitted || message.feedbackPending) return;
+  const consent = elements.learningConsent.checked;
+  if (message.feedback === rating && !consent) {
+    message.feedback = null;
+    persistChats();
+    renderMessages();
+    return;
+  }
+  const previousRating = message.feedback;
+  message.feedback = message.feedback === rating && consent && message.feedbackId
+    ? rating
+    : message.feedback === rating ? null : rating;
+  persistChats();
+  renderMessages();
+  if (!consent || !message.feedbackId || !message.feedback) {
+    showToast(consent
+      ? "Ask a new question to give anonymous learning feedback on its answer."
+      : "Rating saved in this browser. Opt in to anonymously improve passage ranking.");
+    return;
+  }
+
+  message.feedbackPending = true;
+  renderMessages();
+  try {
+    const response = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ feedbackId: message.feedbackId, rating: message.feedback }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Your rating could not be recorded.");
+    message.feedbackSubmitted = true;
+    message.feedbackId = "";
+    showToast("Thanks — your anonymous rating updated SkillMate’s passage ranking.");
+  } catch (error) {
+    message.feedback = previousRating;
+    showToast(error.message === "Failed to fetch"
+      ? "Could not reach the feedback service. Your rating was not sent."
+      : error.message);
+  } finally {
+    message.feedbackPending = false;
+    persistChats();
+    renderMessages();
+  }
+}
+
+async function loadSiteSettings() {
+  try {
+    const response = await fetch("/api/config");
+    if (!response.ok) throw new Error("Could not load website settings.");
+    const settings = await response.json();
+    elements.brandName.textContent = settings.brandName;
+    elements.heroTitle.textContent = settings.headline;
+    elements.heroDescription.textContent = settings.description;
+    document.body.dataset.theme = settings.theme;
+    document.title = `${settings.brandName} — Learn. Build. Grow.`;
+  } catch (error) {
+    console.error("Could not load SkillMate website settings.", error);
+    showToast("Start SkillMate with `npm start` to connect to the shared knowledge base.");
+  }
+}
+
+function closeSidebar() {
+  elements.sidebar.classList.remove("open");
+  elements.mobileBackdrop.classList.remove("visible");
+}
+
+function toggleAbout(open) {
+  if (open && !elements.aboutDialog.open) elements.aboutDialog.showModal();
+  if (!open && elements.aboutDialog.open) elements.aboutDialog.close();
+}
+
+elements.composer.addEventListener("submit", (event) => {
+  event.preventDefault();
+  submitMessage(elements.messageInput.value);
+});
+
+elements.messageInput.addEventListener("input", () => {
+  elements.messageInput.style.height = "auto";
+  elements.messageInput.style.height = `${Math.min(elements.messageInput.scrollHeight, 140)}px`;
+  elements.sendButton.disabled = !elements.messageInput.value.trim();
+});
+
+elements.messageInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    elements.composer.requestSubmit();
+  }
+});
+
+document.querySelectorAll(".prompt-card").forEach((button) => {
+  button.addEventListener("click", () => {
+    elements.messageInput.value = button.dataset.prompt || "";
+    elements.messageInput.dispatchEvent(new Event("input", { bubbles: true }));
+    elements.messageInput.focus();
+    if (window.matchMedia("(max-width: 640px)").matches) {
+      elements.messageInput.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  });
+});
+
+elements.newChat.addEventListener("click", startNewChat);
+elements.clearHistory.addEventListener("click", deleteAllChats);
+elements.historySearch.addEventListener("input", renderHistory);
+elements.learningConsent.addEventListener("change", () => {
+  try {
+    localStorage.setItem("akgec-skillmate-learning-consent-v1", elements.learningConsent.checked ? "yes" : "no");
+    showToast(elements.learningConsent.checked
+      ? "Anonymous feedback is on. Ratings are sent without your question, answer, or identity."
+      : "Anonymous feedback is off. Ratings stay in this browser.");
+  } catch (error) {
+    console.error("Could not save the feedback preference.", error);
+    elements.learningConsent.checked = false;
+    showToast("Could not save your preference. Anonymous feedback remains off.");
+  }
+});
+elements.openSidebar.addEventListener("click", () => {
+  elements.sidebar.classList.add("open");
+  elements.mobileBackdrop.classList.add("visible");
+});
+elements.closeSidebar.addEventListener("click", closeSidebar);
+elements.mobileBackdrop.addEventListener("click", closeSidebar);
+elements.aboutButton.addEventListener("click", () => toggleAbout(true));
+elements.closeAbout.addEventListener("click", () => toggleAbout(false));
+elements.aboutDone.addEventListener("click", () => toggleAbout(false));
+elements.aboutDialog.addEventListener("click", (event) => {
+  if (event.target === elements.aboutDialog) toggleAbout(false);
+});
+document.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+    event.preventDefault();
+    startNewChat();
+  }
+  if (event.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+    event.preventDefault();
+    elements.historySearch.focus();
+  }
+});
+
+updateScreen();
+loadSiteSettings();

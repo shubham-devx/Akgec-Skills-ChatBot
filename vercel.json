@@ -1,0 +1,11 @@
+{
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" }
+  ],
+  "functions": {
+    "api/[...route].mjs": {
+      "maxDuration": 30
+    }
+  }
+}

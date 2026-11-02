@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AKGEC SkillMate — a friendly guide to skills, learning, and opportunities at AKGEC Skills Foundation."
+    />
+    <meta name="theme-color" content="#f7f8fc" />
+    <title>AKGEC SkillMate — Learn. Build. Grow.</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Chat sidebar">
+        <div class="sidebar-top">
+          <a class="brand" href="#" aria-label="AKGEC SkillMate home">
+            <img class="brand-logo" src="/akgec-skills-logo.png" alt="AKGEC Skills" />
+            <span class="brand-copy">
+              <strong id="brandName">AKGEC SkillMate</strong>
+              <small>SKILLS FOUNDATION</small>
+            </span>
+          </a>
+          <button class="icon-button sidebar-close" id="closeSidebar" aria-label="Close navigation" title="Close navigation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+
+        <button class="new-chat-button" id="newChat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          <span>New conversation</span>
+          <span class="shortcut">⌘ K</span>
+        </button>
+
+        <div class="history-heading">
+          <span>YOUR CHATS</span>
+          <button class="icon-button tiny-button" id="clearHistory" title="Delete all chat history" aria-label="Delete all chat history">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+          </button>
+        </div>
+        <label class="history-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 4 4" /></svg>
+          <input id="historySearch" type="search" placeholder="Search conversations" autocomplete="off" />
+          <kbd>/</kbd>
+        </label>
+        <nav class="history-list" id="historyList" aria-label="Conversation history"></nav>
+        <div class="sidebar-spacer"></div>
+        <div class="privacy-card">
+          <span class="privacy-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.9 8.2-7 10-4.1-1.8-7-5.4-7-10V6l7-3Z" /><path d="m9 12 2 2 4-4" /></svg>
+          </span>
+          <div>
+            <strong>Your space, your data</strong>
+            <p>Your chat history stays here. Questions search approved Foundation materials.</p>
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <span class="avatar">A</span>
+          <div class="profile-copy"><strong>AKGEC Learner</strong><small>Skills Foundation</small></div>
+          <span class="local-pill"><i></i> LOCAL</span>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <button class="icon-button menu-button" id="openSidebar" aria-label="Open navigation" title="Open navigation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+          </button>
+          <div class="topbar-context">
+            <span class="context-dot"></span>
+            <span>AKGEC Skills Foundation</span>
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4" /></svg>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button topbar-help" id="aboutButton" aria-label="About SkillMate" title="About SkillMate">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.7 9a2.4 2.4 0 1 1 4.1 1.7c-1 .9-1.8 1.2-1.8 2.8M12 17h.01" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="conversation" id="conversation" aria-live="polite">
+          <div class="welcome" id="welcome">
+            <div class="welcome-hero">
+              <div class="hero-copy">
+                <div class="welcome-kicker"><span class="sparkle">✳</span> YOUR NEXT CHAPTER STARTS HERE</div>
+                <h1 id="heroTitle">Make your next move <span>count.</span></h1>
+                <p class="welcome-description" id="heroDescription">A little curiosity can open a big door. Ask about skills, learning paths, and opportunities at AKGEC.</p>
+                <div class="hero-trust"><span class="hero-trust-icon">✳</span><span>Made for learners, by AKGEC Skills Foundation</span></div>
+              </div>
+              <div class="hero-visual" aria-label="AKGEC Skills Foundation">
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+                <span class="orbit-star star-one">✳</span>
+                <span class="orbit-star star-two">✦</span>
+                <div class="hero-symbol" aria-hidden="true">
+                  <svg viewBox="0 0 96 96">
+                    <path d="M17 25.5c12-4 22-2.1 31 5.2v43c-9-7.3-19-9.2-31-5.2v-43Zm62 0c-12-4-22-2.1-31 5.2v43c9-7.3 19-9.2 31-5.2v-43Z" />
+                    <path d="M48 31v43M27 37c6-.9 11 .1 15 3m-15 6c6-.9 11 .1 15 3m27-12c-6-.9-11 .1-15 3m15 6c-6-.9-11 .1-15 3" />
+                    <path class="hero-symbol-star" d="m48 10 2.5 7.5L58 20l-7.5 2.5L48 30l-2.5-7.5L38 20l7.5-2.5L48 10Z" />
+                  </svg>
+                </div>
+                <span class="hero-float-label"><i></i> SKILLS FOR WHAT'S NEXT</span>
+                <span class="hero-float-number">01 <span>ASK · LEARN · GROW</span></span>
+              </div>
+            </div>
+            <div class="suggestion-heading"><span>START WITH A QUESTION</span><span>Choose a path to explore</span></div>
+            <div class="prompt-grid" aria-label="Suggested questions">
+              <button class="prompt-card" data-prompt="What skills should I learn to get started in tech?">
+                <span class="prompt-icon lavender">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1" /><circle cx="12" cy="12" r="4" /></svg>
+                </span>
+                <span><strong>Find your direction</strong><small>What skills should I learn to get started in tech?</small></span>
+                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+              </button>
+              <button class="prompt-card" data-prompt="How can I build a portfolio with my projects?">
+                <span class="prompt-icon mint">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M8 9h8M8 13h5" /><path d="m15 17 2 2 4-4" /></svg>
+                </span>
+                <span><strong>Build your portfolio</strong><small>How can I build a portfolio with my projects?</small></span>
+                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+              </button>
+              <button class="prompt-card" data-prompt="How do I prepare for my first interview?">
+                <span class="prompt-icon peach">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M8 6V4h8v2M8 11h8m-8 4h5" /></svg>
+                </span>
+                <span><strong>Get interview-ready</strong><small>How do I prepare for my first interview?</small></span>
+                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+              </button>
+              <button class="prompt-card" data-prompt="What learning resources are available at AKGEC Skills Foundation?">
+                <span class="prompt-icon blue">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5v-12Z" /><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20M8 7h7m-7 4h7" /></svg>
+                </span>
+                <span><strong>Explore learning</strong><small>What learning resources are available at AKGEC Skills Foundation?</small></span>
+                <svg class="card-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+              </button>
+            </div>
+            <div class="welcome-note"><span class="note-check">✓</span> One useful answer is a great place to start.</div>
+          </div>
+          <div class="messages" id="messages"></div>
+        </section>
+
+        <footer class="composer-area">
+          <form class="composer" id="composer">
+            <textarea id="messageInput" rows="1" placeholder="Ask SkillMate anything..." aria-label="Your message"></textarea>
+            <button class="send-button" id="sendButton" type="submit" aria-label="Send message" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 14-7-4.8 14-2.3-5-6.9-2Z" /><path d="m11.9 14 3.2-3.2" /></svg>
+            </button>
+          </form>
+          <div class="learning-consent">
+            <label><input id="learningConsent" type="checkbox" /><span class="consent-box"></span><span><strong>Help improve SkillMate</strong><small>Share anonymous thumbs-up/down ratings. Your question and answer are never sent with feedback.</small></span></label>
+            <span class="consent-lock" title="Optional; off by default">PRIVATE BY DEFAULT</span>
+          </div>
+          <div class="composer-meta">
+            <span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg> History saved in this browser</span>
+            <span>Check important information with the Foundation team.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+    <div class="mobile-backdrop" id="mobileBackdrop"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <dialog class="about-dialog" id="aboutDialog">
+      <button class="icon-button dialog-close" id="closeAbout" aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+      </button>
+      <span class="dialog-mark">✳</span>
+      <h2>Your AKGEC learning companion.</h2>
+      <p>SkillMate answers from information approved and added by the AKGEC Skills Foundation team.</p>
+      <div class="dialog-facts">
+        <div><strong>Private chat history</strong><span>Your conversation history stays in this browser.</span></div>
+        <div><strong>Knowledge-based answers</strong><span>Answers use relevant passages from approved Foundation materials.</span></div>
+        <div><strong>Optional learning feedback</strong><span>Ratings improve passage ranking only when you opt in; your question and answer are never attached to a rating.</span></div>
+        <div><strong>Need more help?</strong><span>Contact the AKGEC Skills Foundation team to verify important or time-sensitive information.</span></div>
+      </div>
+      <button class="dialog-done" id="aboutDone">Got it</button>
+    </dialog>
+  </body>
+</html>
