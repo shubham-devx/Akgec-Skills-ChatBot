@@ -6,7 +6,7 @@ AKGEC SkillMate is a responsive learner-facing chat site with a separate `/admin
 
 1. Install Node.js 22.13+.
 2. Install packages with `npm install`.
-3. Set `ADMIN_PASSWORD` in the server process environment to exactly 9 digits or a passphrase of at least 16 characters. Nine-digit numeric passwords are significantly less secure; a unique 16+ character passphrase is strongly recommended. The passphrase is never stored in source code.
+3. Set `ADMIN_PASSWORD` in the server process environment to exactly 9 digits, exactly 9 lowercase letters, or a passphrase of at least 16 characters. Nine-character passwords are significantly less secure; a unique 16+ character passphrase is strongly recommended. The passphrase is never stored in source code.
 4. Start the server with `npm start`.
 5. Open `http://localhost:3000` for the public chat or `http://localhost:3000/admin` for the admin studio.
 
@@ -39,4 +39,4 @@ Chat history remains in each visitor's browser `localStorage`; questions are sen
 
 ## Deployment
 
-For Vercel, create and connect a **private** Blob store to the project, then set `ADMIN_PASSWORD` in Vercel Project Settings → Environment Variables. The app accepts exactly 9 digits or a passphrase of at least 16 characters; nine-digit numeric passwords are significantly less secure, so a unique 16+ character passphrase is strongly recommended. Never put secrets in source control or chat. The private Blob store adds its own credentials to the selected deployment environments. Until `ADMIN_PASSWORD` is configured, the public chat can be viewed but admin sign-in is deliberately disabled. Redeploy after configuring the passphrase. Point the QR code to the deployed public URL; keep `/admin` private and do not print admin credentials in a QR code.
+For Vercel, create and connect a **private** Blob store to the project, then set `ADMIN_PASSWORD` in Vercel Project Settings → Environment Variables. The app accepts exactly 9 digits, exactly 9 lowercase letters, or a passphrase of at least 16 characters. Nine-character passwords are significantly less secure; a unique 16+ character passphrase is strongly recommended. Never put secrets in source control or chat. The private Blob store adds its own credentials to the selected deployment environments. Until `ADMIN_PASSWORD` is configured, the public chat can be viewed but admin sign-in is deliberately disabled. Redeploy after configuring the passphrase. Point the QR code to the deployed public URL; keep `/admin` private and do not print admin credentials in a QR code.

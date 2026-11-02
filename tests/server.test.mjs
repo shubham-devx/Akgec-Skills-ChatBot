@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { after, before, test } from "node:test";
 
-const password = "731946208";
+const password = "skillmate";
 const origin = "http://127.0.0.1";
 let dataDirectory;
 let server;
