@@ -256,9 +256,20 @@ test("admin route, guided menu, navigation, safety, and persistent settings", as
     })).json();
     assert.equal(back.menu.nodeId, "training-programs");
 
+    const backAgain = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        question: "Back",
+        nodeId: back.menu.nodeId,
+        trail: back.menu.trail,
+        action: "back",
+      }),
+    })).json();
+    assert.equal(backAgain.menu.nodeId, "home");
+
     const home = await (await api("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ question: "Main menu", nodeId: back.menu.nodeId, action: "home" }),
+      body: JSON.stringify({ question: "Main menu", nodeId: backAgain.menu.nodeId, action: "home" }),
     })).json();
     assert.equal(home.menu.nodeId, "home");
 

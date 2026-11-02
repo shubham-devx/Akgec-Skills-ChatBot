@@ -32,6 +32,7 @@ const elements = {
 let chats = readChats();
 let activeChatId = null;
 let toastTimeout;
+let messagePending = false;
 
 function readChats() {
   try {
@@ -372,12 +373,13 @@ function safetyRefusal(text) {
 
 async function submitMessage(text, selection = {}) {
   const content = text.trim();
-  if (!content) return;
+  if (!content || messagePending) return;
   if (content.length > 2000) {
     showToast("Please keep your question under 2,000 characters.");
     return;
   }
 
+  messagePending = true;
   const previousMenu = currentMenu();
   const menuRequest = {
     nodeId: selection.nodeId ?? previousMenu?.nodeId,
@@ -428,6 +430,7 @@ async function submitMessage(text, selection = {}) {
     pendingMessage.feedbackId = result.feedbackId || "";
     pendingMessage.menu = result.menu || (result.blocked ? menuRequest : null);
     pendingMessage.timestamp = Date.now();
+    messagePending = false;
     chats = [chat, ...chats.filter((item) => item.id !== chat.id)].slice(0, MAX_STORED_CHATS);
     persistChats();
     updateScreen({ scroll: true });
@@ -438,6 +441,7 @@ async function submitMessage(text, selection = {}) {
         : error.message;
     pendingMessage.menu = previousMenu;
     pendingMessage.timestamp = Date.now();
+    messagePending = false;
     persistChats();
     updateScreen();
     showToast(error.message === "Failed to fetch"
