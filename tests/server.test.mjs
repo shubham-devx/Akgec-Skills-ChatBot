@@ -221,6 +221,17 @@ test("admin route, guided menu, navigation, safety, and persistent settings", as
     assert.equal(list.menu.options.length, 7);
     assert.match(list.text, /Choose a centre or training area/i);
 
+    const secondProgram = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({
+        question: "2",
+        nodeId: list.menu.nodeId,
+        trail: list.menu.trail,
+      }),
+    })).json();
+    assert.equal(secondProgram.menu.nodeId, "program-labview");
+    assert.match(secondProgram.text, /LabVIEW Academy covers LabVIEW/i);
+
     const details = await (await api("/api/chat", {
       method: "POST",
       body: JSON.stringify({

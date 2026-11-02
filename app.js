@@ -239,6 +239,8 @@ function renderMessages() {
   elements.messages.replaceChildren();
   elements.welcome.hidden = Boolean(chat?.messages.length);
   if (!chat) return;
+  const latestMenuIndex = chat.messages.reduce((latest, message, index) =>
+    message.role === "assistant" && message.menu ? index : latest, -1);
 
   chat.messages.forEach((message, index) => {
     const wrapper = document.createElement("article");
@@ -286,7 +288,9 @@ function renderMessages() {
     });
     body.append(heading, text);
 
-    const menuControls = renderMenuControls(message);
+    const menuControls = index === latestMenuIndex && index === chat.messages.length - 1
+      ? renderMenuControls(message)
+      : null;
     if (menuControls) body.append(menuControls);
     wrapper.append(avatar, body);
     elements.messages.append(wrapper);
@@ -432,6 +436,7 @@ async function submitMessage(text, selection = {}) {
     pendingMessage.text = error.message === "Failed to fetch"
         ? "I couldn’t reach the answer service just now. Please try again in a moment."
         : error.message;
+    pendingMessage.menu = previousMenu;
     pendingMessage.timestamp = Date.now();
     persistChats();
     updateScreen();
