@@ -41,6 +41,29 @@ const retrievalStopWords = new Set([
   "get", "give", "find", "know", "help", "explain", "show", "me", "my", "a",
   "an", "to", "of", "in", "on", "at", "by", "or", "as", "if", "do", "did",
 ]);
+const faqStopWords = new Set(["akgec", "foundation", "skill", "skills", "student", "students", "training", "train", "after", "today"]);
+const faqSpecificTerms = new Set([
+  "automation", "certificate", "coe", "course", "fee", "funding", "incubation", "internship",
+  "manufacturing", "placement", "robot", "service", "startup", "workshop",
+]);
+const conversationalIntentIds = new Set(["chat-005", "chat-006", "chat-007"]);
+const keywordAliases = new Map([
+  ["cost", "fee"], ["price", "fee"], ["charge", "fee"],
+  ["program", "course"], ["programme", "course"], ["class", "course"],
+  ["job", "placement"], ["employment", "placement"], ["promise", "guarantee"],
+  ["intern", "internship"], ["robotic", "robot"], ["robotics", "robot"],
+  ["address", "location"], ["located", "location"], ["location", "location"],
+  ["center", "coe"], ["centre", "coe"], ["excellence", "coe"], ["coes", "coe"],
+  ["admission", "registration"], ["register", "registration"], ["registration", "registration"],
+  ["enrol", "registration"], ["enroll", "registration"], ["apply", "registration"],
+  ["availability", "available"],
+]);
+const foundationFaqs = JSON.parse(await readFile(path.join(root, "foundation-faqs.json"), "utf8"));
+if (!Array.isArray(foundationFaqs) || foundationFaqs.some((entry) =>
+  !entry || typeof entry.question !== "string" || typeof entry.answer !== "string" || !entry.answer.trim(),
+)) {
+  throw new Error("foundation-faqs.json must contain question-and-answer entries.");
+}
 const foundationKnowledge = {
   text: [
     "AKGEC Skills Foundation (ASF) is an ISO 9001:2015 certified and NABL accredited facility, and a joint initiative of Ajay Kumar Garg Engineering College (AKGEC) and the National Skill Development Corporation (NSDC), Ministry of Skill Development and Entrepreneurship, Government of India.",
@@ -311,7 +334,7 @@ function safetyRefusal(question) {
 
 function basicChatResponse(question) {
   const normalized = question.toLowerCase().trim().replace(/[\s.!?,;:]+/g, " ");
-  if (/^(?:hi+|hello+|hey+|howdy|namaste|good morning|good afternoon|good evening)(?: there)?$/.test(normalized)) {
+  if (/^(?:hi+|hey+|howdy|namaste|good morning|good afternoon|good evening)(?: there)?$/.test(normalized)) {
     return "Hi! Welcome to AKGEC Skills Foundation. What can I help you with today?";
   }
   if (/^(?:how are you|how are you doing)$/.test(normalized)) {
@@ -327,6 +350,87 @@ function basicChatResponse(question) {
     return "Goodbye! You’re welcome back anytime you have a question for AKGEC Skills Foundation.";
   }
   return "";
+}
+
+function canonicalKeyword(token) {
+  let word = token.toLowerCase();
+  if (keywordAliases.has(word)) return keywordAliases.get(word);
+  if (word.length > 5 && word.endsWith("ies")) word = `${word.slice(0, -3)}y`;
+  else if (word.length > 5 && word.endsWith("ing")) {
+    word = word.slice(0, -3);
+    if (/(.)\1$/.test(word)) word = word.slice(0, -1);
+  } else if (word.length > 4 && word.endsWith("ed")) word = word.slice(0, -2);
+  else if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) word = word.slice(0, -1);
+  return keywordAliases.get(word) || word;
+}
+
+function keywordTokens(text) {
+  return [...new Set((text.toLowerCase().match(/[a-z0-9]{3,}/g) || [])
+    .map(canonicalKeyword)
+    .filter((word) => !retrievalStopWords.has(word) && !faqStopWords.has(word)))];
+}
+
+const indexedFaqs = foundationFaqs.map((entry) => ({
+  ...entry,
+  normalizedQuestion: entry.question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(),
+  questionTerms: new Set(keywordTokens(entry.question)),
+  answerTerms: new Set(keywordTokens(entry.answer)),
+}));
+const faqDocumentFrequency = new Map();
+for (const entry of indexedFaqs) {
+  for (const term of new Set([...entry.questionTerms, ...entry.answerTerms])) {
+    faqDocumentFrequency.set(term, (faqDocumentFrequency.get(term) || 0) + 1);
+  }
+}
+
+function rankFaqMatches(question) {
+  const normalizedQuestion = question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const queryTerms = keywordTokens(question);
+  if (/\bhow much\b/i.test(question)) queryTerms.push("fee");
+  if (/\bwhere\b|\baddress\b|\bdirections?\b/i.test(question)) queryTerms.push("location");
+  if (/\bphone\b|\bnumber\b|\bemail\b/i.test(question)) queryTerms.push("contact");
+  const uniqueQueryTerms = [...new Set(queryTerms)];
+
+  if (!uniqueQueryTerms.length) {
+    const exact = indexedFaqs.find((entry) => entry.normalizedQuestion === normalizedQuestion);
+    return exact ? [{ entry: exact, features: [1, 1, 1, 0], lexicalScore: 1, learnedScore: rewardProbability([1, 1, 1, 0]) }] : [];
+  }
+
+  const termWeight = (term) =>
+    Math.log((indexedFaqs.length + 1) / ((faqDocumentFrequency.get(term) || 0) + 1)) + 1;
+  const totalWeight = uniqueQueryTerms.reduce((total, term) => total + termWeight(term), 0);
+  return indexedFaqs.map((entry) => {
+    const questionMatches = uniqueQueryTerms.filter((term) => entry.questionTerms.has(term));
+    const matchedTerms = uniqueQueryTerms.filter((term) => entry.questionTerms.has(term) || entry.answerTerms.has(term));
+    const matchedWeight = (terms) => terms.reduce((total, term) => total + termWeight(term), 0);
+    const questionCoverage = matchedWeight(questionMatches) / totalWeight;
+    const overallCoverage = matchedWeight(matchedTerms) / totalWeight;
+    const exactPhrase = entry.normalizedQuestion === normalizedQuestion;
+    const conversationalIntent = conversationalIntentIds.has(entry.id) &&
+      normalizedQuestion.startsWith(entry.normalizedQuestion);
+    const minimumMatches = uniqueQueryTerms.length > 2 ? 2 : 1;
+    if (questionMatches.length === 0 || matchedTerms.length < minimumMatches || overallCoverage < 0.54) return null;
+    const unmatchedSpecificTerms = [...entry.questionTerms]
+      .filter((term) => faqSpecificTerms.has(term) && !uniqueQueryTerms.includes(term)).length;
+
+    const features = [
+      overallCoverage,
+      questionCoverage,
+      exactPhrase || conversationalIntent ? 1 : 0,
+      Math.min(1, entry.answer.length / 500),
+    ];
+    return {
+      entry,
+      features,
+      lexicalScore: questionCoverage * 0.72 + overallCoverage * 0.28 +
+        (exactPhrase ? 0.1 : 0) + (conversationalIntent ? 0.4 : 0) - unmatchedSpecificTerms * 0.55,
+      learnedScore: rewardProbability(features),
+    };
+  }).filter(Boolean).sort((a, b) =>
+    b.lexicalScore - a.lexicalScore ||
+    b.learnedScore - a.learnedScore ||
+    b.entry.question.length - a.entry.question.length,
+  );
 }
 
 function sentenceCandidates(question, documents = data.documents) {
@@ -422,7 +526,15 @@ async function handleApi(request, response, url) {
       return true;
     }
     const matches = sentenceCandidates(question);
-    if (!matches.length) matches.push(...sentenceCandidates(question, [foundationKnowledge]));
+    const faqMatch = rankFaqMatches(question)[0];
+    if (faqMatch && (!matches.length || faqMatch.lexicalScore >= matches[0].features[0])) {
+      json(response, 200, {
+        text: faqMatch.entry.answer,
+        feedbackId: registerFeedbackContext(faqMatch.features),
+        learningMode: "keyword-faq",
+      });
+      return true;
+    }
     if (matches.length) {
       const exploring = data.ranker.feedbackCount >= 10 && Math.random() < feedbackExplorationRate;
       const selected = exploring && matches.length > 1
@@ -433,11 +545,19 @@ async function handleApi(request, response, url) {
         feedbackId: registerFeedbackContext(selected.features),
         learningMode: "contextual-bandit",
       });
+    }
+    const officialMatches = sentenceCandidates(question, [foundationKnowledge]);
+    if (officialMatches.length) {
+      const selected = officialMatches[0];
+      json(response, 200, {
+        text: selected.sentence,
+        feedbackId: registerFeedbackContext(selected.features),
+        learningMode: "contextual-bandit",
+      });
+      return true;
     } else {
       json(response, 200, {
-        text: data.documents.length
-          ? "I couldn’t find that information in the approved materials I have. Try rephrasing your question or contact the AKGEC Skills Foundation team."
-          : "The AKGEC Skills Foundation team hasn’t added any approved knowledge materials yet. Please check back soon.",
+        text: "I’m here to help with AKGEC Skills Foundation enquiries, including courses, internships, training, industrial services and startup incubation. I couldn’t find confirmed information for that question. Contact skills@akgec.ac.in or +91 9910249199 for assistance.",
         feedbackId: "",
       });
     }

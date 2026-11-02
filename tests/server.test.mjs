@@ -154,7 +154,11 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     assert.equal(home.headers.get("x-content-type-options"), "nosniff");
   });
 
-  await t.test("answers greetings and common Foundation questions before uploads", async () => {
+  await t.test("answers greetings and Foundation questions before uploads", async () => {
+    const faqData = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8"));
+    assert.equal(faqData.filter((entry) => entry.id.startsWith("faq-")).length, 105);
+    assert.equal(faqData.filter((entry) => entry.id.startsWith("chat-")).length, 15);
+
     const greeting = await (await api("/api/chat", {
       method: "POST",
       body: JSON.stringify({ question: "hi" }),
@@ -167,7 +171,7 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       method: "POST",
       body: JSON.stringify({ question: "What training programs does AKGEC Skills Foundation offer?" }),
     })).json();
-    assert.match(training.text, /technical and vocational training programs/i);
+    assert.match(training.text, /Industrial Robotics/i);
     assert.doesNotMatch(training.text, /akgecskills\.in|source/i);
 
     const contact = await (await api("/api/chat", {
@@ -175,6 +179,43 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       body: JSON.stringify({ question: "What is the contact email for AKGEC Skills?" }),
     })).json();
     assert.match(contact.text, /skills@akgec\.ac\.in/);
+  });
+
+  await t.test("retrieves FAQ answers through question keyword matching", async () => {
+    const join = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "I want to join a robotics course." }),
+    })).json();
+    assert.match(join.text, /your qualification and the course you are interested in/i);
+    assert.equal(join.learningMode, "keyword-faq");
+
+    const fee = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "How much does a robotics course cost?" }),
+    })).json();
+    assert.match(fee.text, /Course fees vary according to the training program/i);
+    assert.match(fee.text, /latest fee details/i);
+    assert.equal(fee.learningMode, "keyword-faq");
+
+    const job = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "Do you promise students a job after training?" }),
+    })).json();
+    assert.match(job.text, /No placement guarantee should be assumed/i);
+    assert.equal(job.learningMode, "keyword-faq");
+
+    const incubation = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "What is the incubation centre email?" }),
+    })).json();
+    assert.match(incubation.text, /incubation\.asf@akgec\.ac\.in/);
+
+    const unrelated = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "Can you tell me today's weather forecast?" }),
+    })).json();
+    assert.match(unrelated.text, /AKGEC Skills Foundation enquiries/i);
+    assert.notEqual(unrelated.learningMode, "keyword-faq");
   });
 
   await t.test("rejects cross-origin and incorrect admin sign-in", async () => {
@@ -227,7 +268,7 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       method: "POST",
       body: JSON.stringify({ question: "Tell me about available scholarships" }),
     })).json();
-    assert.match(unrelated.text, /couldn’t find that information/i);
+    assert.match(unrelated.text, /couldn’t find confirmed information/i);
   });
 
   await t.test("blocks secret and adult-content requests without echoing them", async () => {

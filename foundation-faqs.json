@@ -1,0 +1,602 @@
+[
+  {
+    "id": "faq-001",
+    "question": "What is AKGEC Skills Foundation?",
+    "answer": "AKGEC Skills Foundation (ASF) is an initiative of Ajay Kumar Garg Engineering College (AKGEC), supported by the National Skill Development Corporation (NSDC). It focuses on providing industry-oriented skill development, technical training, advanced manufacturing, robotics and automation education."
+  },
+  {
+    "id": "faq-002",
+    "question": "Where is AKGEC Skills Foundation located?",
+    "answer": "AKGEC Skills Foundation is located at: Ajay Kumar Garg Engineering College, 27th KM Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad, Uttar Pradesh – 201015."
+  },
+  {
+    "id": "faq-003",
+    "question": "Is AKGEC Skills Foundation part of AKGEC?",
+    "answer": "Yes. AKGEC Skills Foundation is an initiative associated with Ajay Kumar Garg Engineering College, Ghaziabad."
+  },
+  {
+    "id": "faq-004",
+    "question": "What is the main objective of AKGEC Skills Foundation?",
+    "answer": "Its primary objective is to bridge the gap between academic education and industrial requirements by providing practical, technology-oriented training and developing industry-ready professionals."
+  },
+  {
+    "id": "faq-005",
+    "question": "Is AKGEC Skills Foundation government-approved?",
+    "answer": "AKGEC Skills Foundation is associated with NSDC and the Ministry of Skill Development and Entrepreneurship, Government of India. It also has an ISO 9001:2015 certification and NABL-accredited facilities. For a specific course's approval or recognition, please contact the Foundation."
+  },
+  {
+    "id": "faq-006",
+    "question": "Is AKGEC Skills Foundation a private company or an educational institution?",
+    "answer": "It is a Section 8 company established to promote skill development, industrial training, innovation and entrepreneurship."
+  },
+  {
+    "id": "faq-007",
+    "question": "What makes AKGEC Skills Foundation different from other training institutes?",
+    "answer": "It provides hands-on industrial training through specialized Centres of Excellence, modern equipment, industry collaborations and practical learning opportunities."
+  },
+  {
+    "id": "faq-008",
+    "question": "Does AKGEC Skills Foundation provide practical training?",
+    "answer": "Yes. Its training programs emphasize hands-on learning using industrial equipment, software, automation systems and advanced manufacturing technologies."
+  },
+  {
+    "id": "faq-009",
+    "question": "Who can contact AKGEC Skills Foundation?",
+    "answer": "Students, diploma holders, ITI candidates, engineering graduates, working professionals, industries, educational institutions and aspiring entrepreneurs can contact the Foundation."
+  },
+  {
+    "id": "faq-010",
+    "question": "What are the official contact details?",
+    "answer": "- Phone: +91 9910249199 - Email: skills@akgec.ac.in - Website: https://www.akgecskills.in/ For incubation-related enquiries, email incubation.asf@akgec.ac.in."
+  },
+  {
+    "id": "faq-011",
+    "question": "What courses are offered by AKGEC Skills Foundation?",
+    "answer": "AKGEC Skills Foundation offers training in areas such as: - Industrial Robotics - Industrial Automation - Robot Programming - Robot Cell Design - Advanced Manufacturing - CNC Machining - CAD/CAM - Welding Technology - Measurement and Metrology - Reverse Engineering - Robotic Process Automation - Internet of Things (IoT) - 3D Printing and Additive Manufacturing Course availability depends on the training centre and current schedule."
+  },
+  {
+    "id": "faq-012",
+    "question": "Does AKGEC Skills Foundation offer robotics courses?",
+    "answer": "Yes. It offers industrial robotics training covering robot programming, operation, simulation, applications and advanced robotic technologies."
+  },
+  {
+    "id": "faq-013",
+    "question": "Does AKGEC Skills Foundation provide industrial automation training?",
+    "answer": "Yes. Training is available in industrial automation, integrated automation, control systems and related technologies."
+  },
+  {
+    "id": "faq-014",
+    "question": "Does AKGEC Skills Foundation offer CNC training?",
+    "answer": "Yes. Training opportunities are available in CNC machining, including milling, turning, manufacturing processes and CAD/CAM."
+  },
+  {
+    "id": "faq-015",
+    "question": "Does AKGEC Skills Foundation offer welding training?",
+    "answer": "Yes. Advanced welding and robotic welding technologies are among its technical training areas."
+  },
+  {
+    "id": "faq-016",
+    "question": "Does AKGEC Skills Foundation offer 3D printing courses?",
+    "answer": "Yes. It has facilities and expertise related to additive manufacturing, 3D printing, prototyping and product development."
+  },
+  {
+    "id": "faq-017",
+    "question": "Does AKGEC Skills Foundation offer CAD/CAM training?",
+    "answer": "Yes. CAD/CAM and computer-integrated manufacturing are among its manufacturing-related training areas."
+  },
+  {
+    "id": "faq-018",
+    "question": "Are courses available for beginners?",
+    "answer": "Yes. Certain programs are designed for beginners, while others require prior technical knowledge. Eligibility depends on the specific course."
+  },
+  {
+    "id": "faq-019",
+    "question": "Are advanced-level courses available?",
+    "answer": "Yes. Selected training programs offer basic, advanced and expert-level learning."
+  },
+  {
+    "id": "faq-020",
+    "question": "Does AKGEC Skills Foundation offer short-term courses?",
+    "answer": "Yes. Depending on the program, training may range from one-day workshops to multi-week technical courses."
+  },
+  {
+    "id": "faq-021",
+    "question": "Does AKGEC Skills Foundation offer long-term training?",
+    "answer": "Yes. Selected programs include longer industrial internships and specialized training opportunities."
+  },
+  {
+    "id": "faq-022",
+    "question": "How can I know which course is suitable for me?",
+    "answer": "Please share your educational qualification, branch and area of interest. Our team can guide you towards a suitable training program."
+  },
+  {
+    "id": "faq-023",
+    "question": "Can I learn robotics without prior robotics knowledge?",
+    "answer": "Yes. You can explore beginner-level robotics programs. The suitable starting level depends on your educational background and the course requirements."
+  },
+  {
+    "id": "faq-024",
+    "question": "Are courses available in online mode?",
+    "answer": "Training at the Foundation includes practical, equipment-based learning. Please contact the training team to confirm whether a particular program is available online, offline or in hybrid mode."
+  },
+  {
+    "id": "faq-025",
+    "question": "Who is eligible to join AKGEC Skills Foundation courses?",
+    "answer": "Eligibility varies by course. Programs may be available for engineering students, diploma holders, ITI candidates, school students and working professionals."
+  },
+  {
+    "id": "faq-026",
+    "question": "Can B.Tech students apply?",
+    "answer": "Yes. Engineering students can apply for suitable technical training, workshops and industrial internship programs."
+  },
+  {
+    "id": "faq-027",
+    "question": "Can diploma students apply?",
+    "answer": "Yes. Diploma students can apply for eligible technical and vocational training programs."
+  },
+  {
+    "id": "faq-028",
+    "question": "Can ITI students apply?",
+    "answer": "Yes. Selected vocational and technical programs are available for ITI candidates."
+  },
+  {
+    "id": "faq-029",
+    "question": "Can students from non-mechanical branches apply for robotics training?",
+    "answer": "Yes. Students from different engineering disciplines may be eligible for selected robotics and automation programs. Course-specific prerequisites may apply."
+  },
+  {
+    "id": "faq-030",
+    "question": "Can working professionals join the courses?",
+    "answer": "Yes. Certain programs are designed for industry professionals who want to upgrade their technical knowledge and practical skills."
+  },
+  {
+    "id": "faq-031",
+    "question": "Can students from other colleges apply?",
+    "answer": "Yes. Training opportunities are available for students from other educational institutions, subject to course eligibility and availability."
+  },
+  {
+    "id": "faq-032",
+    "question": "How do I register for a course?",
+    "answer": "Visit the official website at https://www.akgecskills.in/ or contact the Foundation's training team to enquire about registration for your selected course."
+  },
+  {
+    "id": "faq-033",
+    "question": "What documents are required for admission?",
+    "answer": "Requirements vary by program. Generally, you may be asked to provide educational qualification details, identification and other course-specific documents. Please confirm the exact requirements before registration."
+  },
+  {
+    "id": "faq-034",
+    "question": "Is there any entrance examination?",
+    "answer": "Entrance requirements depend on the particular training program. Please contact the training team for confirmation."
+  },
+  {
+    "id": "faq-035",
+    "question": "Can I join after completing Class 10 or Class 12?",
+    "answer": "Certain vocational and skill development programs may be suitable for school-level students. Eligibility depends on the program."
+  },
+  {
+    "id": "faq-036",
+    "question": "What is the fee for courses at AKGEC Skills Foundation?",
+    "answer": "Course fees vary according to the training program, duration, equipment and certification requirements. Please contact our team for the latest fee details."
+  },
+  {
+    "id": "faq-037",
+    "question": "Are there any free courses?",
+    "answer": "The availability of sponsored or free training depends on specific schemes, projects and batches. Please contact the Foundation for current opportunities."
+  },
+  {
+    "id": "faq-038",
+    "question": "What is the duration of the courses?",
+    "answer": "Course durations vary. Some programs are conducted for one day or one week, while others may run for several weeks or months."
+  },
+  {
+    "id": "faq-039",
+    "question": "When will the next batch start?",
+    "answer": "Upcoming batch schedules depend on the selected course. Please share the course name so our team can provide the latest schedule."
+  },
+  {
+    "id": "faq-040",
+    "question": "Can I get a course timetable?",
+    "answer": "Yes. You can request the latest timetable from the training team."
+  },
+  {
+    "id": "faq-041",
+    "question": "Can I pay the course fees online?",
+    "answer": "Payment methods depend on the current registration process. Please contact the Foundation for official payment instructions."
+  },
+  {
+    "id": "faq-042",
+    "question": "Is there any discount for students?",
+    "answer": "Fee concessions or special training opportunities may be available under specific programs. Please enquire about the current eligibility criteria."
+  },
+  {
+    "id": "faq-043",
+    "question": "Does AKGEC Skills Foundation provide internships?",
+    "answer": "Yes. Selected programs include industrial internship opportunities in areas such as robotics, automation and advanced manufacturing."
+  },
+  {
+    "id": "faq-044",
+    "question": "What is the duration of internships?",
+    "answer": "Internship duration depends on the program. Some listed industrial internship programs have a duration of six months."
+  },
+  {
+    "id": "faq-045",
+    "question": "Can I apply for an internship as a B.Tech student?",
+    "answer": "Yes. Engineering students can enquire about available internship opportunities based on their branch and eligibility."
+  },
+  {
+    "id": "faq-046",
+    "question": "Do I receive a certificate after completing training?",
+    "answer": "Certificate availability depends on the particular course and its assessment and completion requirements."
+  },
+  {
+    "id": "faq-047",
+    "question": "Is the certificate industry-recognized?",
+    "answer": "The Foundation works with industry partners and recognized organizations on skill development and certification initiatives. The specific issuing authority and recognition depend on the selected program."
+  },
+  {
+    "id": "faq-048",
+    "question": "Does AKGEC Skills Foundation guarantee placement?",
+    "answer": "No placement guarantee should be assumed. The Foundation focuses on developing industry-relevant skills and employability. Any placement assistance or recruitment opportunity is subject to the specific program and employer requirements."
+  },
+  {
+    "id": "faq-049",
+    "question": "Will I get practical industrial experience?",
+    "answer": "Yes. Practical training and exposure to industrial equipment and applications are important parts of the Foundation's training approach."
+  },
+  {
+    "id": "faq-050",
+    "question": "Can I get help with career guidance?",
+    "answer": "You can contact the Foundation to enquire about suitable technical training pathways and career development opportunities."
+  },
+  {
+    "id": "faq-051",
+    "question": "What are Centres of Excellence at AKGEC Skills Foundation?",
+    "answer": "Centres of Excellence (CoEs) are specialized facilities established in collaboration with industry partners to provide advanced technical training, research, product development and industrial services."
+  },
+  {
+    "id": "faq-052",
+    "question": "How many Centres of Excellence does AKGEC Skills Foundation have?",
+    "answer": "The Foundation's website highlights 14 Centres of Excellence. These facilities cover different industrial and technological domains."
+  },
+  {
+    "id": "faq-053",
+    "question": "Which companies collaborate with AKGEC Skills Foundation?",
+    "answer": "Its industry collaborations include globally recognized organizations such as: - Siemens - KUKA - Bosch Rexroth - Carl Zeiss - Fronius - Messer - Mitsubishi Electric"
+  },
+  {
+    "id": "faq-054",
+    "question": "Does AKGEC Skills Foundation have a KUKA Robotics Centre?",
+    "answer": "Yes. The AKGEC-KUKA Centre provides industrial robotics training, including robot programming, operation and applications."
+  },
+  {
+    "id": "faq-055",
+    "question": "Does AKGEC Skills Foundation have a Siemens Centre?",
+    "answer": "Yes. Siemens is among its industry partners, particularly in advanced manufacturing and automation-related technologies."
+  },
+  {
+    "id": "faq-056",
+    "question": "What is the Bosch Rexroth Centre?",
+    "answer": "It is an industry-associated facility focused on industrial automation, hydraulics, pneumatics and related manufacturing technologies."
+  },
+  {
+    "id": "faq-057",
+    "question": "What is the Advanced Manufacturing Centre?",
+    "answer": "The Advanced Manufacturing Centre (AMC) provides training and industrial services in CNC machining, CAD/CAM, computer-integrated manufacturing, measurement and metrology, and reverse engineering."
+  },
+  {
+    "id": "faq-058",
+    "question": "What is the Automation Industry Association Centre?",
+    "answer": "The AKGEC-AIA Centre of Integrated Automation focuses on developing practical competencies in industrial automation for engineering students and industry professionals."
+  },
+  {
+    "id": "faq-059",
+    "question": "Does AKGEC Skills Foundation have advanced robotics facilities?",
+    "answer": "Yes. The Foundation provides access to specialized robotics facilities for training, practical learning and industrial applications."
+  },
+  {
+    "id": "faq-060",
+    "question": "What is the purpose of industry partnerships?",
+    "answer": "Industry partnerships help align training with current industrial requirements, introduce modern technologies and provide exposure to industry practices."
+  },
+  {
+    "id": "faq-061",
+    "question": "Does AKGEC Skills Foundation provide services to industries?",
+    "answer": "Yes. It offers technical, manufacturing, measurement, testing, design and consultancy services to industries."
+  },
+  {
+    "id": "faq-062",
+    "question": "Does AKGEC Skills Foundation provide 3D printing services?",
+    "answer": "Yes. It offers 3D printing and additive manufacturing-related services for prototyping and product development."
+  },
+  {
+    "id": "faq-063",
+    "question": "Does AKGEC Skills Foundation provide CNC machining services?",
+    "answer": "Yes. Its manufacturing capabilities include CNC machining, turning, milling and related processes."
+  },
+  {
+    "id": "faq-064",
+    "question": "Does AKGEC Skills Foundation provide product design services?",
+    "answer": "Yes. Its services include 3D modelling, design, structural analysis and product development support."
+  },
+  {
+    "id": "faq-065",
+    "question": "Does AKGEC Skills Foundation provide laser cutting services?",
+    "answer": "Yes. Laser cutting and engraving are among its listed manufacturing and design services."
+  },
+  {
+    "id": "faq-066",
+    "question": "Does AKGEC Skills Foundation provide calibration services?",
+    "answer": "Yes. Measurement, calibration and metrology-related services are among its industrial service offerings."
+  },
+  {
+    "id": "faq-067",
+    "question": "What is Non-Destructive Testing (NDT)?",
+    "answer": "NDT refers to testing methods used to inspect materials and components without damaging them. The Foundation lists NDT among its industrial service capabilities."
+  },
+  {
+    "id": "faq-068",
+    "question": "Can companies approach AKGEC Skills Foundation for industrial projects?",
+    "answer": "Yes. Industries can approach the Foundation for manufacturing, prototyping, automation, testing and technical consultancy requirements."
+  },
+  {
+    "id": "faq-069",
+    "question": "Does AKGEC Skills Foundation provide customized industrial training?",
+    "answer": "Customized training enquiries can be made by industries. The scope, technology, duration and delivery arrangements need to be discussed with the concerned team."
+  },
+  {
+    "id": "faq-070",
+    "question": "Can industries collaborate with AKGEC Skills Foundation?",
+    "answer": "Yes. Industries and organizations can explore technical collaborations, training partnerships, consultancy and research-related opportunities."
+  },
+  {
+    "id": "faq-071",
+    "question": "Does AKGEC Skills Foundation support startups?",
+    "answer": "Yes. Through its Technology Business Incubator (ASF-TBI), the Foundation supports technology-driven entrepreneurs and startups."
+  },
+  {
+    "id": "faq-072",
+    "question": "What is ASF-TBI?",
+    "answer": "ASF-TBI stands for AKGEC Skills Foundation – Technology Business Incubator. It supports entrepreneurs through mentoring, technical infrastructure, prototyping facilities and industry connections."
+  },
+  {
+    "id": "faq-073",
+    "question": "Who can apply for incubation?",
+    "answer": "Entrepreneurs, innovators, startup founders and teams working on technology-driven business ideas can enquire about incubation opportunities."
+  },
+  {
+    "id": "faq-074",
+    "question": "What types of startups does ASF-TBI support?",
+    "answer": "Its focus areas include: - Industrial Automation - Robotics - Internet of Things (IoT) - Advanced Manufacturing - Product Development - Emerging Engineering Technologies"
+  },
+  {
+    "id": "faq-075",
+    "question": "Does the incubation centre provide mentorship?",
+    "answer": "Yes. ASF-TBI offers mentoring and access to technical and industry expertise to help startups develop their ideas."
+  },
+  {
+    "id": "faq-076",
+    "question": "Can I develop a prototype at AKGEC Skills Foundation?",
+    "answer": "Yes. The incubation centre provides access to prototyping and product development facilities, subject to project evaluation and facility availability."
+  },
+  {
+    "id": "faq-077",
+    "question": "Does ASF-TBI provide funding to startups?",
+    "answer": "Funding support should not be assumed. Please contact the incubation team to enquire about current funding schemes, grants, investor connections and eligibility."
+  },
+  {
+    "id": "faq-078",
+    "question": "How can I apply for incubation?",
+    "answer": "Visit the incubation section of the official website and submit the application form. You can also contact the incubation team directly."
+  },
+  {
+    "id": "faq-079",
+    "question": "What is the incubation contact email?",
+    "answer": "You can contact the incubation team at incubation.asf@akgec.ac.in."
+  },
+  {
+    "id": "faq-080",
+    "question": "What is the incubation contact number?",
+    "answer": "You can contact the office at +91 9910249199 or +91 8743879879."
+  },
+  {
+    "id": "faq-081",
+    "question": "Does AKGEC Skills Foundation organize entrepreneurship workshops?",
+    "answer": "Yes. The Foundation conducts or supports entrepreneurship and startup-related activities. Contact the team for upcoming workshop and event information."
+  },
+  {
+    "id": "faq-082",
+    "question": "Can students participate in startup activities?",
+    "answer": "Students can enquire about startup development, innovation, prototyping, mentoring and incubation opportunities. akgecskills.in"
+  },
+  {
+    "id": "faq-083",
+    "question": "Does AKGEC Skills Foundation have modern infrastructure?",
+    "answer": "Yes. The Foundation operates specialized technical facilities and Centres of Excellence with modern industrial equipment."
+  },
+  {
+    "id": "faq-084",
+    "question": "How large is the facility?",
+    "answer": "The incubation website describes approximately 50,000 square feet of infrastructure."
+  },
+  {
+    "id": "faq-085",
+    "question": "Is accommodation available for outstation students?",
+    "answer": "Accommodation arrangements should be confirmed with the training team for the specific program and batch."
+  },
+  {
+    "id": "faq-086",
+    "question": "Is food available on campus?",
+    "answer": "Food and canteen arrangements may be available on campus. Please confirm current availability and charges before visiting."
+  },
+  {
+    "id": "faq-087",
+    "question": "Is there parking available?",
+    "answer": "Please check with the campus administration regarding current visitor parking arrangements."
+  },
+  {
+    "id": "faq-088",
+    "question": "Can parents visit the Foundation?",
+    "answer": "Parents can enquire about visiting the campus and training facilities. Prior coordination with the concerned team is recommended."
+  },
+  {
+    "id": "faq-089",
+    "question": "Can students visit the Centres of Excellence?",
+    "answer": "Visits may be arranged depending on the centre's schedule, operational requirements and prior approval."
+  },
+  {
+    "id": "faq-090",
+    "question": "Can educational institutions organize industrial visits?",
+    "answer": "Educational institutions can contact the Foundation to discuss industrial visits, technical demonstrations and training-related activities."
+  },
+  {
+    "id": "faq-091",
+    "question": "Does AKGEC Skills Foundation organize workshops?",
+    "answer": "Yes. The Foundation conducts technical workshops, hands-on training sessions, skill development activities and industry-oriented programs."
+  },
+  {
+    "id": "faq-092",
+    "question": "How can I know about upcoming workshops?",
+    "answer": "Visit the official website or contact the Foundation to enquire about upcoming workshops, registration dates and available seats."
+  },
+  {
+    "id": "faq-093",
+    "question": "Does AKGEC Skills Foundation organize seminars?",
+    "answer": "Yes. Technical seminars, expert interactions and industry-oriented knowledge-sharing activities may be organized."
+  },
+  {
+    "id": "faq-094",
+    "question": "Can colleges organize workshops in collaboration with AKGEC Skills Foundation?",
+    "answer": "Yes. Colleges and educational institutions can contact the Foundation to discuss technical workshops, training programs and academic collaborations."
+  },
+  {
+    "id": "faq-095",
+    "question": "Can companies conduct employee training at AKGEC Skills Foundation?",
+    "answer": "Yes. Companies can enquire about customized industrial training and employee skill development programs."
+  },
+  {
+    "id": "faq-096",
+    "question": "How can I get the latest event updates?",
+    "answer": "Please visit the official website and follow AKGEC Skills Foundation's official social media channels."
+  },
+  {
+    "id": "faq-097",
+    "question": "Can I get photographs or videos of previous events?",
+    "answer": "Please visit the website's news and events section or contact the Foundation's communication team."
+  },
+  {
+    "id": "faq-098",
+    "question": "How can I invite AKGEC Skills Foundation to an event?",
+    "answer": "You can send an invitation and event details to skills@akgec.ac.in for consideration by the concerned team."
+  },
+  {
+    "id": "faq-099",
+    "question": "How can I contact AKGEC Skills Foundation?",
+    "answer": "You can contact us through: - Phone: +91 9910249199 - Email: skills@akgec.ac.in - Website: https://www.akgecskills.in/"
+  },
+  {
+    "id": "faq-100",
+    "question": "What are the office timings?",
+    "answer": "Please contact the Foundation directly to confirm current office hours and working days."
+  },
+  {
+    "id": "faq-101",
+    "question": "How can I get directions to AKGEC Skills Foundation?",
+    "answer": "Search for AKGEC Skills Foundation or Ajay Kumar Garg Engineering College, Ghaziabad, on Google Maps."
+  },
+  {
+    "id": "faq-102",
+    "question": "Can I speak with a course coordinator?",
+    "answer": "Yes. Please share your name, contact number and course of interest so the concerned team can assist you."
+  },
+  {
+    "id": "faq-103",
+    "question": "How can I submit a general enquiry?",
+    "answer": "You can send your enquiry to skills@akgec.ac.in or use the contact section on the official website."
+  },
+  {
+    "id": "faq-104",
+    "question": "I have not received a response to my enquiry. What should I do?",
+    "answer": "Please contact the Foundation by phone or send a follow-up email mentioning your previous enquiry and contact details."
+  },
+  {
+    "id": "faq-105",
+    "question": "How can I report a problem with registration?",
+    "answer": "Please share your registration details and describe the issue with the training team through the official contact email."
+  },
+  {
+    "id": "chat-001",
+    "question": "Hi",
+    "answer": "Hello! Welcome to AKGEC Skills Foundation. How can I help you today?"
+  },
+  {
+    "id": "chat-002",
+    "question": "Hello",
+    "answer": "Hello! Welcome to AKGEC Skills Foundation. Are you looking for courses, internships, industrial services or startup incubation?"
+  },
+  {
+    "id": "chat-003",
+    "question": "What do you do?",
+    "answer": "We provide industry-oriented skill development, technical training, advanced manufacturing, robotics, automation and incubation support."
+  },
+  {
+    "id": "chat-004",
+    "question": "Tell me about your courses",
+    "answer": "We offer technical training in robotics, automation, CNC, CAD/CAM, welding, 3D printing and other industrial technologies."
+  },
+  {
+    "id": "chat-005",
+    "question": "I want to join",
+    "answer": "Great! Please tell me your qualification and the course you are interested in."
+  },
+  {
+    "id": "chat-006",
+    "question": "I need a job",
+    "answer": "We focus on developing industry-relevant skills and employability. Please tell us your qualification and technical background."
+  },
+  {
+    "id": "chat-007",
+    "question": "I want an internship",
+    "answer": "We offer selected internship programs in technical domains. Please share your branch and current year of study."
+  },
+  {
+    "id": "chat-008",
+    "question": "What is the fee?",
+    "answer": "Course fees vary depending on the program. Please tell me which course you are interested in."
+  },
+  {
+    "id": "chat-009",
+    "question": "Where are you?",
+    "answer": "We are located at Ajay Kumar Garg Engineering College, Ghaziabad, Uttar Pradesh."
+  },
+  {
+    "id": "chat-010",
+    "question": "Give me your number",
+    "answer": "You can contact us at +91 9910249199."
+  },
+  {
+    "id": "chat-011",
+    "question": "Give me your email",
+    "answer": "Our official email is skills@akgec.ac.in."
+  },
+  {
+    "id": "chat-012",
+    "question": "Do you provide certificates?",
+    "answer": "Certificate availability depends on the selected training program and its completion requirements."
+  },
+  {
+    "id": "chat-013",
+    "question": "Is admission open?",
+    "answer": "Please tell me which course you are interested in so I can guide you regarding registration and batch availability."
+  },
+  {
+    "id": "chat-014",
+    "question": "Can I visit?",
+    "answer": "Yes, you can enquire about a campus visit. We recommend contacting our team before visiting."
+  },
+  {
+    "id": "chat-015",
+    "question": "Thank you",
+    "answer": "You're welcome! Thank you for contacting AKGEC Skills Foundation."
+  }
+]
