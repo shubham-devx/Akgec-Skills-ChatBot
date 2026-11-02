@@ -60,12 +60,12 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 const adminPassword = process.env.ADMIN_PASSWORD;
 const validAdminPassword = adminPassword && (/^\d{9}$/.test(adminPassword) || adminPassword.length >= 16);
-if ((!adminPassword && !process.env.VERCEL) || (adminPassword && !validAdminPassword)) {
+if ((!adminPassword || !validAdminPassword) && !process.env.VERCEL) {
   throw new Error("Set ADMIN_PASSWORD to exactly 9 digits or a passphrase of at least 16 characters. Do not put it in source code.");
 }
 
 const passwordSalt = randomBytes(16);
-const passwordHash = adminPassword
+const passwordHash = validAdminPassword
   ? await scryptAsync(adminPassword, passwordSalt, 64)
   : null;
 
@@ -439,7 +439,7 @@ async function handleApi(request, response, url) {
 
   if (url.pathname === "/api/admin/login" && request.method === "POST") {
     if (!passwordHash) {
-      json(response, 503, { error: "Admin sign-in is disabled. Set ADMIN_PASSWORD in Vercel Project Settings, then redeploy." });
+      json(response, 503, { error: "Admin sign-in is disabled. Set ADMIN_PASSWORD to exactly 9 digits or at least 16 characters in Vercel Project Settings, then redeploy." });
       return true;
     }
     if (!requestOriginIsSame(request)) {
