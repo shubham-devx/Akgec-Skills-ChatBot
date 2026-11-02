@@ -1,5 +1,5 @@
 node_modules/
-.env
-data/
+.env*
 .vercel/
+data/
 npm-debug.log*

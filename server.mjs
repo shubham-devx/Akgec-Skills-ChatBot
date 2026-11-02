@@ -59,12 +59,14 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const adminPassword = process.env.ADMIN_PASSWORD;
-if (!adminPassword || adminPassword.length < 16) {
+if ((!adminPassword && !process.env.VERCEL) || (adminPassword && adminPassword.length < 16)) {
   throw new Error("Set ADMIN_PASSWORD to a strong passphrase of at least 16 characters before starting. Do not put it in source code.");
 }
 
 const passwordSalt = randomBytes(16);
-const passwordHash = await scryptAsync(adminPassword, passwordSalt, 64);
+const passwordHash = adminPassword
+  ? await scryptAsync(adminPassword, passwordSalt, 64)
+  : null;
 
 let data;
 let saveQueue = Promise.resolve();
@@ -435,6 +437,10 @@ async function handleApi(request, response, url) {
   }
 
   if (url.pathname === "/api/admin/login" && request.method === "POST") {
+    if (!passwordHash) {
+      json(response, 503, { error: "Admin sign-in is disabled. Set ADMIN_PASSWORD in Vercel Project Settings, then redeploy." });
+      return true;
+    }
     if (!requestOriginIsSame(request)) {
       json(response, 403, { error: "This login request was rejected." });
       return true;
