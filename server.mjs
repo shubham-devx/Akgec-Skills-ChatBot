@@ -58,11 +58,32 @@ const keywordAliases = new Map([
   ["enrol", "registration"], ["enroll", "registration"], ["apply", "registration"],
   ["availability", "available"],
 ]);
-const foundationFaqs = JSON.parse(await readFile(path.join(root, "foundation-faqs.json"), "utf8"));
-if (!Array.isArray(foundationFaqs) || foundationFaqs.some((entry) =>
-  !entry || typeof entry.question !== "string" || typeof entry.answer !== "string" || !entry.answer.trim(),
-)) {
-  throw new Error("foundation-faqs.json must contain question-and-answer entries.");
+const foundationFaqCorpus = JSON.parse(await readFile(path.join(root, "foundation-faqs.json"), "utf8"));
+const foundationFaqs = foundationFaqCorpus?.faqs;
+if (
+  foundationFaqCorpus?.schemaVersion !== 2 ||
+  !Array.isArray(foundationFaqCorpus.categories) ||
+  !Array.isArray(foundationFaqs) ||
+  foundationFaqs.some((entry) =>
+    !entry ||
+    typeof entry.id !== "string" ||
+    typeof entry.category !== "string" ||
+    !foundationFaqCorpus.categories.includes(entry.category) ||
+    typeof entry.question !== "string" ||
+    !Array.isArray(entry.questionVariants) ||
+    entry.questionVariants.some((variant) => typeof variant !== "string") ||
+    !Array.isArray(entry.keywords) ||
+    typeof entry.answer !== "string" ||
+    !entry.answer.trim() ||
+    typeof entry.reviewRequired !== "boolean" ||
+    !entry.chunk ||
+    typeof entry.chunk.id !== "string" ||
+    typeof entry.chunk.text !== "string" ||
+    entry.chunk.metadata?.faqId !== entry.id ||
+    entry.chunk.metadata?.category !== entry.category
+  )
+) {
+  throw new Error("foundation-faqs.json must contain valid categorized FAQ chunks.");
 }
 const foundationKnowledge = {
   text: [
@@ -373,7 +394,10 @@ function keywordTokens(text) {
 const indexedFaqs = foundationFaqs.map((entry) => ({
   ...entry,
   normalizedQuestion: entry.question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(),
-  questionTerms: new Set(keywordTokens(entry.question)),
+  questionTerms: new Set(keywordTokens([
+    entry.question,
+    ...entry.questionVariants,
+  ].join(" "))),
   answerTerms: new Set(keywordTokens(entry.answer)),
 }));
 const faqDocumentFrequency = new Map();

@@ -155,7 +155,7 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
   });
 
   await t.test("answers greetings and Foundation questions before uploads", async () => {
-    const faqData = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8"));
+    const faqData = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8")).faqs;
     assert.equal(faqData.filter((entry) => entry.id.startsWith("faq-")).length, 105);
     assert.equal(faqData.filter((entry) => entry.id.startsWith("chat-")).length, 15);
 
@@ -179,6 +179,41 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       body: JSON.stringify({ question: "What is the contact email for AKGEC Skills?" }),
     })).json();
     assert.match(contact.text, /skills@akgec\.ac\.in/);
+  });
+
+  await t.test("loads the categorized, deduplicated FAQ chunk corpus", async () => {
+    const corpus = JSON.parse(await readFile(path.resolve(import.meta.dirname, "..", "foundation-faqs.json"), "utf8"));
+    const { faqs, categories } = corpus;
+    assert.equal(corpus.schemaVersion, 2);
+    assert.deepEqual(categories, [
+      "General Information",
+      "Courses & Training",
+      "Admissions & Registration",
+      "Fees & Duration",
+      "Internships & Placements",
+      "Centres of Excellence",
+      "Industrial Services",
+      "Startup Incubation",
+      "Contact & Support",
+    ]);
+    assert.equal(faqs.length, 120);
+    assert.equal(new Set(faqs.map((entry) => entry.id)).size, faqs.length);
+    assert.equal(new Set(faqs.map((entry) => entry.question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim())).size, faqs.length);
+    assert.deepEqual(corpus.counts, Object.fromEntries(
+      categories.map((category) => [category, faqs.filter((entry) => entry.category === category).length]),
+    ));
+    for (const entry of faqs) {
+      assert.ok(categories.includes(entry.category), `${entry.id} has an unknown category`);
+      assert.ok(entry.questionVariants.includes(entry.question), `${entry.id} is missing its canonical question variant`);
+      assert.ok(entry.keywords.length > 0, `${entry.id} is missing searchable keywords`);
+      assert.equal(entry.chunk.metadata.faqId, entry.id);
+      assert.equal(entry.chunk.metadata.category, entry.category);
+      assert.ok(entry.chunk.text.length <= corpus.chunking.maxChunkCharacters, `${entry.id} exceeds the chunk limit`);
+      assert.equal(entry.verificationStatus, "unverified");
+    }
+    assert.doesNotMatch(faqs.find((entry) => entry.id === "faq-082").answer, /akgecskills\.in/i);
+    assert.match(faqs.find((entry) => entry.id === "faq-010").answer, /^Phone:/);
+    assert.equal(corpus.faqs.find((entry) => entry.id === "faq-036").reviewRequired, true);
   });
 
   await t.test("retrieves FAQ answers through question keyword matching", async () => {
@@ -209,6 +244,13 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       body: JSON.stringify({ question: "What is the incubation centre email?" }),
     })).json();
     assert.match(incubation.text, /incubation\.asf@akgec\.ac\.in/);
+
+    const addressVariant = await (await api("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: "What is the address of AKGEC Skills Foundation?" }),
+    })).json();
+    assert.match(addressVariant.text, /Delhi-Hapur Bypass Road/i);
+    assert.equal(addressVariant.learningMode, "keyword-faq");
 
     const unrelated = await (await api("/api/chat", {
       method: "POST",
