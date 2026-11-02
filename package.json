@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node server.mjs",
     "build": "npm run check",
-    "check": "node --check server.mjs && node --check app.js && node --check admin.js && node --check \"api/[...route].mjs\" && node --check tests/server.test.mjs",
+    "check": "node --check server.mjs && node --check app.js && node --check admin.js && node --check \"api/[...route].mjs\" && node --check \"api/admin/[...path].mjs\" && node --check tests/server.test.mjs",
     "test": "node --test"
   },
   "dependencies": {
