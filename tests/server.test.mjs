@@ -221,22 +221,23 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
       method: "POST",
       body: JSON.stringify({ question: "I want to join a robotics course." }),
     })).json();
-    assert.match(join.text, /your qualification and the course you are interested in/i);
+    assert.match(join.text, /qualification/i);
+    assert.match(join.text, /course/i);
     assert.equal(join.learningMode, "keyword-faq");
 
     const fee = await (await api("/api/chat", {
       method: "POST",
       body: JSON.stringify({ question: "How much does a robotics course cost?" }),
     })).json();
-    assert.match(fee.text, /Course fees vary according to the training program/i);
-    assert.match(fee.text, /latest fee details/i);
+    assert.match(fee.text, /Fees depend on the course/i);
+    assert.match(fee.text, /latest amount/i);
     assert.equal(fee.learningMode, "keyword-faq");
 
     const job = await (await api("/api/chat", {
       method: "POST",
       body: JSON.stringify({ question: "Do you promise students a job after training?" }),
     })).json();
-    assert.match(job.text, /No placement guarantee should be assumed/i);
+    assert.match(job.text, /A job isn't guaranteed/i);
     assert.equal(job.learningMode, "keyword-faq");
 
     const incubation = await (await api("/api/chat", {
@@ -258,6 +259,54 @@ test("admin route, access controls, shared knowledge, PDF ingestion, and learner
     })).json();
     assert.match(unrelated.text, /AKGEC Skills Foundation enquiries/i);
     assert.notEqual(unrelated.learningMode, "keyword-faq");
+  });
+
+  await t.test("answers common questions in a natural, helpful tone", async () => {
+    const cases = [
+      {
+        question: "What is AKGEC Skills Foundation?",
+        expected: /skill-development initiative/i,
+      },
+      {
+        question: "Can you tell me where AKGEC Skills Foundation is located?",
+        expected: /You'll find AKGEC Skills Foundation/i,
+      },
+      {
+        question: "What courses does AKGEC Skills Foundation offer?",
+        expected: /The Foundation lists training in/i,
+      },
+      {
+        question: "How do I register for a course?",
+        expected: /contact the Foundation's training team/i,
+      },
+      {
+        question: "How much does a course cost?",
+        expected: /I don't have a confirmed current fee list/i,
+      },
+      {
+        question: "Does the Foundation guarantee me a job?",
+        expected: /A job isn't guaranteed/i,
+      },
+      {
+        question: "What is the phone number for AKGEC Skills Foundation?",
+        expected: /You can contact us at/i,
+      },
+      {
+        question: "I want to join",
+        expected: /what course are you interested in/i,
+      },
+    ];
+
+    for (const { question, expected } of cases) {
+      const response = await api("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ question }),
+      });
+      const answer = await response.json();
+      assert.equal(response.status, 200, question);
+      assert.match(answer.text, expected, question);
+      assert.doesNotMatch(answer.text, /source:|akgecskills\.in/i, question);
+    }
   });
 
   await t.test("rejects cross-origin and incorrect admin sign-in", async () => {

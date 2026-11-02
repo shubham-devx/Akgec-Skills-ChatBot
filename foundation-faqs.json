@@ -38,7 +38,7 @@
         "What is AKGEC Skills Foundation?",
         "Tell me about AKGEC Skills Foundation."
       ],
-      "answer": "AKGEC Skills Foundation (ASF) is an initiative of Ajay Kumar Garg Engineering College (AKGEC), supported by the National Skill Development Corporation (NSDC). It focuses on providing industry-oriented skill development, technical training, advanced manufacturing, robotics and automation education.",
+      "answer": "AKGEC Skills Foundation (ASF) is the skill-development initiative of Ajay Kumar Garg Engineering College. It is supported by the National Skill Development Corporation (NSDC) and focuses on industry-oriented training in robotics, automation and advanced manufacturing.",
       "keywords": [
         "advanced",
         "ajay",
@@ -69,7 +69,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "faq-001-chunk-001",
-        "text": "Question: What is AKGEC Skills Foundation?\nAlso asked: Tell me about AKGEC Skills Foundation.\nAnswer: AKGEC Skills Foundation (ASF) is an initiative of Ajay Kumar Garg Engineering College (AKGEC), supported by the National Skill Development Corporation (NSDC). It focuses on providing industry-oriented skill development, technical training, advanced manufacturing, robotics and automation education.",
+        "text": "Question: What is AKGEC Skills Foundation?\nAlso asked: Tell me about AKGEC Skills Foundation.\nAnswer: AKGEC Skills Foundation (ASF) is the skill-development initiative of Ajay Kumar Garg Engineering College. It is supported by the National Skill Development Corporation (NSDC) and focuses on industry-oriented training in robotics, automation and advanced manufacturing.",
         "metadata": {
           "faqId": "faq-001",
           "category": "General Information",
@@ -86,7 +86,7 @@
         "Where is AKGEC Skills Foundation located?",
         "What is the address of AKGEC Skills Foundation?"
       ],
-      "answer": "AKGEC Skills Foundation is located at: Ajay Kumar Garg Engineering College, 27th KM Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad, Uttar Pradesh – 201015.",
+      "answer": "You'll find AKGEC Skills Foundation at Ajay Kumar Garg Engineering College, 27th KM Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad, Uttar Pradesh 201015.",
       "keywords": [
         "201015",
         "27th",
@@ -112,7 +112,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "faq-002-chunk-001",
-        "text": "Question: Where is AKGEC Skills Foundation located?\nAlso asked: What is the address of AKGEC Skills Foundation?\nAnswer: AKGEC Skills Foundation is located at: Ajay Kumar Garg Engineering College, 27th KM Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad, Uttar Pradesh – 201015.",
+        "text": "Question: Where is AKGEC Skills Foundation located?\nAlso asked: What is the address of AKGEC Skills Foundation?\nAnswer: You'll find AKGEC Skills Foundation at Ajay Kumar Garg Engineering College, 27th KM Stone, Delhi-Hapur Bypass Road, P.O. Adhyatmik Nagar, Ghaziabad, Uttar Pradesh 201015.",
         "metadata": {
           "faqId": "faq-002",
           "category": "General Information",
@@ -459,7 +459,7 @@
         "What courses are offered by AKGEC Skills Foundation?",
         "What programs are offered by AKGEC Skills Foundation?"
       ],
-      "answer": "AKGEC Skills Foundation offers training in areas such as: Industrial Robotics; Industrial Automation; Robot Programming; Robot Cell Design; Advanced Manufacturing; CNC Machining; CAD/CAM; Welding Technology; Measurement and Metrology; Reverse Engineering; Robotic Process Automation; Internet of Things (IoT); 3D Printing and Additive Manufacturing Course availability depends on the training centre and current schedule.",
+      "answer": "The Foundation lists training in Industrial Robotics, Industrial Automation, Robot Programming, Robot Cell Design, Advanced Manufacturing, CNC Machining, CAD/CAM, Welding, Metrology, Reverse Engineering, Robotic Process Automation, IoT and 3D Printing. Availability can vary by centre and schedule, so check with the team about the course you have in mind.",
       "keywords": [
         "additive",
         "advanced",
@@ -506,7 +506,7 @@
       "reviewReason": "Confirm current course, operational, accreditation, partner, facility, or contact details with the Foundation before relying on them.",
       "chunk": {
         "id": "faq-011-chunk-001",
-        "text": "Question: What courses are offered by AKGEC Skills Foundation?\nAlso asked: What programs are offered by AKGEC Skills Foundation?\nAnswer: AKGEC Skills Foundation offers training in areas such as: Industrial Robotics; Industrial Automation; Robot Programming; Robot Cell Design; Advanced Manufacturing; CNC Machining; CAD/CAM; Welding Technology; Measurement and Metrology; Reverse Engineering; Robotic Process Automation; Internet of Things (IoT); 3D Printing and Additive Manufacturing Course availability depends on the training centre and current schedule.",
+        "text": "Question: What courses are offered by AKGEC Skills Foundation?\nAlso asked: What programs are offered by AKGEC Skills Foundation?\nAnswer: The Foundation lists training in Industrial Robotics, Industrial Automation, Robot Programming, Robot Cell Design, Advanced Manufacturing, CNC Machining, CAD/CAM, Welding, Metrology, Reverse Engineering, Robotic Process Automation, IoT and 3D Printing. Availability can vary by centre and schedule, so check with the team about the course you have in mind.",
         "metadata": {
           "faqId": "faq-011",
           "category": "Courses & Training",
@@ -1311,7 +1311,7 @@
         "How do I register for a course?",
         "How do I register for a program?"
       ],
-      "answer": "Visit the official website at https://www.akgecskills.in/ or contact the Foundation's training team to enquire about registration for your selected course.",
+      "answer": "To register, contact the Foundation's training team with the course you have in mind. They can guide you through the current steps and confirm availability.",
       "keywords": [
         "akgecskills",
         "contact",
@@ -1334,7 +1334,7 @@
       "reviewReason": "Confirm current course, operational, accreditation, partner, facility, or contact details with the Foundation before relying on them.",
       "chunk": {
         "id": "faq-032-chunk-001",
-        "text": "Question: How do I register for a course?\nAlso asked: How do I register for a program?\nAnswer: Visit the official website at https://www.akgecskills.in/ or contact the Foundation's training team to enquire about registration for your selected course.",
+        "text": "Question: How do I register for a course?\nAlso asked: How do I register for a program?\nAnswer: To register, contact the Foundation's training team with the course you have in mind. They can guide you through the current steps and confirm availability.",
         "metadata": {
           "faqId": "faq-032",
           "category": "Admissions & Registration",
@@ -1476,7 +1476,7 @@
         "What is the fee for courses at AKGEC Skills Foundation?",
         "Tell me about the fee for courses at AKGEC Skills Foundation."
       ],
-      "answer": "Course fees vary according to the training program, duration, equipment and certification requirements. Please contact our team for the latest fee details.",
+      "answer": "Fees depend on the course, its duration, equipment and certification requirements. I don't have a confirmed current fee list, so contact the team for the latest amount for your chosen program.",
       "keywords": [
         "according",
         "certification",
@@ -1501,7 +1501,7 @@
       "reviewReason": "Confirm current course, operational, accreditation, partner, facility, or contact details with the Foundation before relying on them.",
       "chunk": {
         "id": "faq-036-chunk-001",
-        "text": "Question: What is the fee for courses at AKGEC Skills Foundation?\nAlso asked: Tell me about the fee for courses at AKGEC Skills Foundation.\nAnswer: Course fees vary according to the training program, duration, equipment and certification requirements. Please contact our team for the latest fee details.",
+        "text": "Question: What is the fee for courses at AKGEC Skills Foundation?\nAlso asked: Tell me about the fee for courses at AKGEC Skills Foundation.\nAnswer: Fees depend on the course, its duration, equipment and certification requirements. I don't have a confirmed current fee list, so contact the team for the latest amount for your chosen program.",
         "metadata": {
           "faqId": "faq-036",
           "category": "Fees & Duration",
@@ -1600,7 +1600,7 @@
         "When will the next batch start?",
         "Can you confirm: When will the next batch start?"
       ],
-      "answer": "Upcoming batch schedules depend on the selected course. Please share the course name so our team can provide the latest schedule.",
+      "answer": "Batch dates vary by course. Which program are you interested in? The team can share the latest schedule.",
       "keywords": [
         "batch",
         "course",
@@ -1623,7 +1623,7 @@
       "reviewReason": "Confirm current course, operational, accreditation, partner, facility, or contact details with the Foundation before relying on them.",
       "chunk": {
         "id": "faq-039-chunk-001",
-        "text": "Question: When will the next batch start?\nAlso asked: Can you confirm: When will the next batch start?\nAnswer: Upcoming batch schedules depend on the selected course. Please share the course name so our team can provide the latest schedule.",
+        "text": "Question: When will the next batch start?\nAlso asked: Can you confirm: When will the next batch start?\nAnswer: Batch dates vary by course. Which program are you interested in? The team can share the latest schedule.",
         "metadata": {
           "faqId": "faq-039",
           "category": "Fees & Duration",
@@ -1950,7 +1950,7 @@
         "Does AKGEC Skills Foundation guarantee placement?",
         "Does AKGEC Skills Foundation guarantee job placement?"
       ],
-      "answer": "No placement guarantee should be assumed. The Foundation focuses on developing industry-relevant skills and employability. Any placement assistance or recruitment opportunity is subject to the specific program and employer requirements.",
+      "answer": "A job isn't guaranteed after training. The Foundation focuses on industry-relevant skills and employability; any placement support depends on the specific program and employer requirements. Please confirm the details for your course with the team.",
       "keywords": [
         "assistance",
         "assumed",
@@ -1975,7 +1975,7 @@
       "reviewReason": "Confirm current course, operational, accreditation, partner, facility, or contact details with the Foundation before relying on them.",
       "chunk": {
         "id": "faq-048-chunk-001",
-        "text": "Question: Does AKGEC Skills Foundation guarantee placement?\nAlso asked: Does AKGEC Skills Foundation guarantee job placement?\nAnswer: No placement guarantee should be assumed. The Foundation focuses on developing industry-relevant skills and employability. Any placement assistance or recruitment opportunity is subject to the specific program and employer requirements.",
+        "text": "Question: Does AKGEC Skills Foundation guarantee placement?\nAlso asked: Does AKGEC Skills Foundation guarantee job placement?\nAnswer: A job isn't guaranteed after training. The Foundation focuses on industry-relevant skills and employability; any placement support depends on the specific program and employer requirements. Please confirm the details for your course with the team.",
         "metadata": {
           "faqId": "faq-048",
           "category": "Internships & Placements",
@@ -3906,7 +3906,7 @@
         "How can I contact AKGEC Skills Foundation?",
         "What are the contact details for AKGEC Skills Foundation?"
       ],
-      "answer": "You can contact us through: Phone: +91 9910249199; Email: skills@akgec.ac.in; Website: https://www.akgecskills.in/",
+      "answer": "You can call the Foundation at +91 9910249199 or email skills@akgec.ac.in. For incubation enquiries, email incubation.asf@akgec.ac.in.",
       "keywords": [
         "9910249199",
         "akgecskills",
@@ -3923,7 +3923,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "faq-099-chunk-001",
-        "text": "Question: How can I contact AKGEC Skills Foundation?\nAlso asked: What are the contact details for AKGEC Skills Foundation?\nAnswer: You can contact us through: Phone: +91 9910249199; Email: skills@akgec.ac.in; Website: https://www.akgecskills.in/",
+        "text": "Question: How can I contact AKGEC Skills Foundation?\nAlso asked: What are the contact details for AKGEC Skills Foundation?\nAnswer: You can call the Foundation at +91 9910249199 or email skills@akgec.ac.in. For incubation enquiries, email incubation.asf@akgec.ac.in.",
         "metadata": {
           "faqId": "faq-099",
           "category": "Contact & Support",
@@ -3975,7 +3975,7 @@
         "How can I get directions to AKGEC Skills Foundation?",
         "What is the process to get directions to AKGEC Skills Foundation?"
       ],
-      "answer": "Search for AKGEC Skills Foundation or Ajay Kumar Garg Engineering College, Ghaziabad, on Google Maps.",
+      "answer": "Open Google Maps and search for AKGEC Skills Foundation or Ajay Kumar Garg Engineering College in Ghaziabad to get directions.",
       "keywords": [
         "ajay",
         "college",
@@ -3993,7 +3993,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "faq-101-chunk-001",
-        "text": "Question: How can I get directions to AKGEC Skills Foundation?\nAlso asked: What is the process to get directions to AKGEC Skills Foundation?\nAnswer: Search for AKGEC Skills Foundation or Ajay Kumar Garg Engineering College, Ghaziabad, on Google Maps.",
+        "text": "Question: How can I get directions to AKGEC Skills Foundation?\nAlso asked: What is the process to get directions to AKGEC Skills Foundation?\nAnswer: Open Google Maps and search for AKGEC Skills Foundation or Ajay Kumar Garg Engineering College in Ghaziabad to get directions.",
         "metadata": {
           "faqId": "faq-101",
           "category": "Contact & Support",
@@ -4047,7 +4047,7 @@
         "How can I submit a general enquiry?",
         "What is the process to submit a general enquiry?"
       ],
-      "answer": "You can send your enquiry to skills@akgec.ac.in or use the contact section on the official website.",
+      "answer": "You can email your question to skills@akgec.ac.in. If it's about a particular course, include its name so the team can direct your enquiry.",
       "keywords": [
         "contact",
         "enquiry",
@@ -4064,7 +4064,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "faq-103-chunk-001",
-        "text": "Question: How can I submit a general enquiry?\nAlso asked: What is the process to submit a general enquiry?\nAnswer: You can send your enquiry to skills@akgec.ac.in or use the contact section on the official website.",
+        "text": "Question: How can I submit a general enquiry?\nAlso asked: What is the process to submit a general enquiry?\nAnswer: You can email your question to skills@akgec.ac.in. If it's about a particular course, include its name so the team can direct your enquiry.",
         "metadata": {
           "faqId": "faq-103",
           "category": "Contact & Support",
@@ -4293,7 +4293,7 @@
         "I want to join",
         "Can you confirm: I want to join"
       ],
-      "answer": "Great! Please tell me your qualification and the course you are interested in.",
+      "answer": "Absolutely! What course are you interested in, and what is your current qualification? I can help you figure out the right next step.",
       "keywords": [
         "course",
         "great",
@@ -4306,7 +4306,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "chat-005-chunk-001",
-        "text": "Question: I want to join\nAlso asked: Can you confirm: I want to join\nAnswer: Great! Please tell me your qualification and the course you are interested in.",
+        "text": "Question: I want to join\nAlso asked: Can you confirm: I want to join\nAnswer: Absolutely! What course are you interested in, and what is your current qualification? I can help you figure out the right next step.",
         "metadata": {
           "faqId": "chat-005",
           "category": "Admissions & Registration",
@@ -4323,7 +4323,7 @@
         "I need a job",
         "Can you confirm: I need a job"
       ],
-      "answer": "We focus on developing industry-relevant skills and employability. Please tell us your qualification and technical background.",
+      "answer": "I can help you explore training that builds industry-relevant skills. What did you study, and which technical areas interest you? I can't promise a job, but I can help you find a useful starting point.",
       "keywords": [
         "background",
         "developing",
@@ -4341,7 +4341,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "chat-006-chunk-001",
-        "text": "Question: I need a job\nAlso asked: Can you confirm: I need a job\nAnswer: We focus on developing industry-relevant skills and employability. Please tell us your qualification and technical background.",
+        "text": "Question: I need a job\nAlso asked: Can you confirm: I need a job\nAnswer: I can help you explore training that builds industry-relevant skills. What did you study, and which technical areas interest you? I can't promise a job, but I can help you find a useful starting point.",
         "metadata": {
           "faqId": "chat-006",
           "category": "Internships & Placements",
@@ -4358,7 +4358,7 @@
         "I want an internship",
         "I want an intern program"
       ],
-      "answer": "We offer selected internship programs in technical domains. Please share your branch and current year of study.",
+      "answer": "The Foundation offers selected technical internship programs. What branch are you in, and which year are you studying? I can help you check what may suit you.",
       "keywords": [
         "branch",
         "current",
@@ -4377,7 +4377,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "chat-007-chunk-001",
-        "text": "Question: I want an internship\nAlso asked: I want an intern program\nAnswer: We offer selected internship programs in technical domains. Please share your branch and current year of study.",
+        "text": "Question: I want an internship\nAlso asked: I want an intern program\nAnswer: The Foundation offers selected technical internship programs. What branch are you in, and which year are you studying? I can help you check what may suit you.",
         "metadata": {
           "faqId": "chat-007",
           "category": "Internships & Placements",
@@ -4394,7 +4394,7 @@
         "What is the fee?",
         "Tell me about the fee."
       ],
-      "answer": "Course fees vary depending on the program. Please tell me which course you are interested in.",
+      "answer": "Fees depend on the program. Which course are you considering? I can share what I know, and the team can confirm the latest fee.",
       "keywords": [
         "course",
         "depending",
@@ -4409,7 +4409,7 @@
       "reviewRequired": false,
       "chunk": {
         "id": "chat-008-chunk-001",
-        "text": "Question: What is the fee?\nAlso asked: Tell me about the fee.\nAnswer: Course fees vary depending on the program. Please tell me which course you are interested in.",
+        "text": "Question: What is the fee?\nAlso asked: Tell me about the fee.\nAnswer: Fees depend on the program. Which course are you considering? I can share what I know, and the team can confirm the latest fee.",
         "metadata": {
           "faqId": "chat-008",
           "category": "Fees & Duration",
